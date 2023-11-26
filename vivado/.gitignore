@@ -1,0 +1,2 @@
+# Ignore Vivado projects entirely, they are created by tcl
+vampire_survivors_vhdl_main

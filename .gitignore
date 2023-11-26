@@ -1,0 +1,15 @@
+# Vivado temp files
+*.str
+*.jou
+*.log
+**/.Xil/*
+
+# VUnit test outputs
+**/vunit_out
+
+## python
+*.pyc
+venv/*
+
+## GTest - unit tests
+build/*

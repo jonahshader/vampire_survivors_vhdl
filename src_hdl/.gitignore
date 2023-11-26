@@ -1,0 +1,5 @@
+# Ignore generated IP files, but allow IP config files
+*/ip/*/*
+!*/ip/*/*.xci
+!*/ip/*/*.xco
+!*/ip/*/*.coe
