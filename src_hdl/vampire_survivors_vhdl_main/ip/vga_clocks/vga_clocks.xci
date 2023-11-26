@@ -4,7 +4,7 @@
     "xci_name": "vga_clocks",
     "component_reference": "xilinx.com:ip:clk_wiz:6.0",
     "ip_revision": "12",
-    "gen_directory": "../../../../sdf_renderer.gen/sources_1/ip/vga_clocks",
+    "gen_directory": ".",
     "parameters": {
       "component_parameters": {
         "Component_Name": [ { "value": "vga_clocks", "resolve_type": "user", "usage": "all" } ],
@@ -599,7 +599,7 @@
         "IPCONTEXT": [ { "value": "IP_Flow" } ],
         "IPREVISION": [ { "value": "12" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../sdf_renderer.gen/sources_1/ip/vga_clocks" } ],
+        "OUTPUTDIR": [ { "value": "." } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "." } ],
         "SWVERSION": [ { "value": "2023.1" } ],
