@@ -20,6 +20,13 @@ package custom_types is
     y : frame_pos_t;
   end record;
 
+  -- used for addressing vga pixels. encompasses 1280x960
+  subtype screen_pos_t is unsigned(10 downto 0);
+  type screen_coord_t is record
+    x : screen_pos_t;
+    y : screen_pos_t;
+  end record;
+
   type pixel_t is record
     color : color_t;
     coord : frame_coord_t;
