@@ -43,6 +43,9 @@ package custom_types is
   -- function prototypes
   function ceil_log2(x : integer) return integer;
 
+  function vec_to_color(data_in : std_logic_vector(11 downto 0)) return color_t;
+  function color_to_vec(data_in : color_t) return std_logic_vector;
+
 
 end package custom_types;
 
@@ -52,5 +55,23 @@ package body custom_types is
   begin
     return integer(ceil(log2(real(x))));
   end function ceil_log2;
+
+  function vec_to_color(data_in : std_logic_vector(11 downto 0)) return color_t is
+    variable result : color_t;
+  begin
+    result.r := color_component_t(data_in(3 downto 0));
+    result.g := color_component_t(data_in(7 downto 4));
+    result.b := color_component_t(data_in(11 downto 8));
+    return result;
+  end function vec_to_color;
+
+  function color_to_vec(data_in : color_t) return std_logic_vector is
+    variable result : std_logic_vector(11 downto 0);
+  begin
+    result(3 downto 0) := std_logic_vector(data_in.r);
+    result(7 downto 4) := std_logic_vector(data_in.g);
+    result(11 downto 8) := std_logic_vector(data_in.b);
+    return result;
+  end function color_to_vec;
 
 end package body custom_types;

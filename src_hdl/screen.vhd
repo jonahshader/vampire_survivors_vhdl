@@ -101,17 +101,13 @@ begin
           we_write(0) <= true;
           we_write(1) <= false; -- turn off writing to the other buffer
           addr_write(0) <= addr_write_full(addr_write(0)'length-1 downto 0);
-          din_write(0)(3 downto 0) <= std_logic_vector(pixel.color.r);
-          din_write(0)(7 downto 4) <= std_logic_vector(pixel.color.g);
-          din_write(0)(11 downto 8) <= std_logic_vector(pixel.color.b);
+          din_write(0)(11 downto 0) <= color_to_vec(pixel.color);
           din_write(0)(17 downto 12) <= (others => '1'); -- alpha or something. not sure yet
         else
           we_write(1) <= true;
           we_write(0) <= false; -- turn off writing to the other buffer
           addr_write(1) <= addr_write_full(addr_write(1)'length-1 downto 0);
-          din_write(1)(3 downto 0) <= std_logic_vector(pixel.color.r);
-          din_write(1)(7 downto 4) <= std_logic_vector(pixel.color.g);
-          din_write(1)(11 downto 8) <= std_logic_vector(pixel.color.b);
+          din_write(1)(11 downto 0) <= color_to_vec(pixel.color);
           din_write(1)(17 downto 12) <= (others => '1'); -- alpha or something. not sure yet
         end if;
       else
@@ -125,23 +121,18 @@ begin
     variable addr_read_full : unsigned(21 downto 0) := (others => '0'); -- TODO: can't work out the math to get 21 bits
   begin
     addr_read_full := shift_right(pixel_pos.x, 2) + shift_right(pixel_pos.y, 2) * WIDTH;
-    -- addr_read_full := shift_right(pixel_pos.x, COORD_SHIFT_AMNT) + shift_right(pixel_pos.y, COORD_SHIFT_AMNT) * shift_right(to_unsigned(WIDTH, addr_read(0)'length), COORD_SHIFT_AMNT);
     if rising_edge(pixel_clock) then
       -- writing to zero, so read from one
       if writing_to_zero = '1' then
         en_read(1) <= true;
         en_read(0) <= false;
         addr_read(1) <= addr_read_full(addr_read(1)'length-1 downto 0);
-        pixel_read_color.r <= unsigned(dout_read(1)(3 downto 0));
-        pixel_read_color.g <= unsigned(dout_read(1)(7 downto 4));
-        pixel_read_color.b <= unsigned(dout_read(1)(11 downto 8));
+        pixel_read_color <= vec_to_color(dout_read(1)(11 downto 0));
       else
         en_read(0) <= true;
         en_read(1) <= false;
         addr_read(0) <= addr_read_full(addr_read(0)'length-1 downto 0);
-        pixel_read_color.r <= unsigned(dout_read(0)(3 downto 0));
-        pixel_read_color.g <= unsigned(dout_read(0)(7 downto 4));
-        pixel_read_color.b <= unsigned(dout_read(0)(11 downto 8));
+        pixel_read_color <= vec_to_color(dout_read(0)(11 downto 0));
       end if;
     end if;
   end process;
