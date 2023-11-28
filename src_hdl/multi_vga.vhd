@@ -12,12 +12,14 @@ entity multi_vga is
     clk2 : in std_logic;
     color_out : out color_t;
     pos : out screen_coord_t;
+    pos_look_ahead : out screen_coord_t;
     hsync : out std_logic;
     vsync : out std_logic;
     valid : out std_logic;
     vga_width : out screen_pos_t;
     vga_height : out screen_pos_t;
-    last_pixel : out std_logic
+    last_pixel : out std_logic;
+    pixel_clock : out std_logic
   );
 end multi_vga;
 
@@ -31,6 +33,7 @@ architecture Behavioral of multi_vga is
     
     signal color_out_vec : color_array;
     signal pos_vec : screen_coord_array;
+    signal pos_look_ahead_vec : screen_coord_array;
     signal hsync_vec : std_logic_vector(1 downto 0);
     signal vsync_vec : std_logic_vector(1 downto 0);
     signal vga_width_vec : position_array;
@@ -42,11 +45,20 @@ architecture Behavioral of multi_vga is
 begin
     color_out <= color_out_vec(0) when mode = '0' else color_out_vec(1);
     pos <= pos_vec(0) when mode = '0' else pos_vec(1);
+    pos_look_ahead <= pos_look_ahead_vec(0) when mode = '0' else pos_look_ahead_vec(1);
     hsync <= hsync_vec(0) when mode = '0' else hsync_vec(1);
     vsync <= vsync_vec(0) when mode = '0' else vsync_vec(1);
     vga_width <= vga_width_vec(0) when mode = '0' else vga_width_vec(1);
     vga_height <= vga_height_vec(0) when mode = '0' else vga_height_vec(1);
     last_pixel <= last_pixel_vec(0) when mode = '0' else last_pixel_vec(1);
+
+    clock_mux_inst : entity work.clock_mux
+    port map(
+        clk1 => clk1,
+        clk2 => clk2,
+        sel => mode,
+        clk_out => pixel_clock
+    );
 
     mode_last_1_proc : process (clk1)
     begin
@@ -85,6 +97,7 @@ begin
         color_in => color_in,
         color_out => color_out_vec(0),
         pos => pos_vec(0),
+        pos_look_ahead => pos_look_ahead_vec(0),
         hsync => hsync_vec(0),
         vsync => vsync_vec(0),
         last_pixel => last_pixel_vec(0),
@@ -111,6 +124,7 @@ begin
         color_in => color_in,
         color_out => color_out_vec(1),
         pos => pos_vec(1),
+        pos_look_ahead => pos_look_ahead_vec(1),
         hsync => hsync_vec(1),
         vsync => vsync_vec(1),
         last_pixel => last_pixel_vec(1),
