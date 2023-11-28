@@ -7,7 +7,7 @@ entity multi_vga is
   Port (
     clear : in std_logic;
     color_in : in color_t;
-    mode : in std_logic; -- 0 = 720p, 1 = 960p
+    mode : in std_logic; -- 0 = 1280x720, 1 = 1280x960
     clk1 : in std_logic;
     clk2 : in std_logic;
     color_out : out color_t;
