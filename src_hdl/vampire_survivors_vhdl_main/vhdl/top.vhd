@@ -32,6 +32,8 @@ architecture Behavioral of top is
   signal pixel_valid : std_logic := '0';
   signal swapped : std_logic;
   signal line_counter : unsigned(8 downto 0);
+  signal frame_counter : unsigned(8 downto 0);
+  signal pixel_step_counter : unsigned(1 downto 0);
   
   component vga_clocks
   port
@@ -74,26 +76,56 @@ begin
   line_proc : process(CLK100MHZ)
   begin
     if rising_edge(CLK100MHZ) then
+      pixel_step_counter <= pixel_step_counter + 1;
       if clr = '1' then
         line_counter <= (others => '0');
+        frame_counter <= (others => '0');
       else
-        if line_counter = 31 then
-          line_counter <= to_unsigned(0, 9);
-        else
-          line_counter <= line_counter + 1;
+        if swapped = '1' then
+          frame_counter <= frame_counter + 1;
+          if frame_counter = 31 then
+            frame_counter <= (others => '0');
+          end if;
+        end if;
+        if pixel_step_counter = 0 then
+          if line_counter = 31 then
+            line_counter <= to_unsigned(0, 9);
+          else
+            line_counter <= line_counter + 1;
+          end if;
         end if;
 
-        -- if the third bit is 1, then write a pixel
-        if line_counter(2) = '1' then
+        if pixel_step_counter = 0 then
+          -- write pixel at (frame_counter, line_counter)
           pixel_valid <= '1';
           pixel.color.r <= to_unsigned(15, 4);
-          pixel.color.g <= to_unsigned(7, 4);
-          pixel.color.b <= to_unsigned(3, 4);
-          pixel.coord.x <= line_counter + 10;
-          pixel.coord.y <= line_counter + 10;
+          pixel.color.g <= to_unsigned(15, 4);
+          pixel.color.b <= to_unsigned(15, 4);
+          pixel.coord.x <= frame_counter;
+          pixel.coord.y <= line_counter;
+
         else
-          pixel_valid <= '0';
+          -- blank out the previous pixel
+          pixel_valid <= '1';
+          pixel.color.r <= to_unsigned(0, 4);
+          pixel.color.g <= to_unsigned(0, 4);
+          pixel.color.b <= to_unsigned(0, 4);
+          pixel.coord.x <= frame_counter - 1;
+          pixel.coord.y <= line_counter;
         end if;
+
+
+        -- if the third bit is 1, then write a pixel
+        -- if line_counter(2) = '1' then
+        --   pixel_valid <= '1';
+        --   pixel.color.r <= to_unsigned(15, 4);
+        --   pixel.color.g <= to_unsigned(7, 4);
+        --   pixel.color.b <= to_unsigned(3, 4);
+        --   pixel.coord.x <= line_counter + 10;
+        --   pixel.coord.y <= line_counter + 10;
+        -- else
+        --   pixel_valid <= '0';
+        -- end if;
       end if;
     end if;
   end process;

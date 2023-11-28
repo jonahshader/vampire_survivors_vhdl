@@ -9,7 +9,7 @@ entity screen is
   generic(
     WIDTH : positive := 320;
     HEIGHT : positive := 180;
-    RENDER_SCALE : positive := 4 -- how many pixels to render per pixel on the screen, must be a power of 2
+    RENDER_SCALE : positive := 4 -- must be a power of 2
   );
   port(
     mclk : in std_logic;
@@ -22,7 +22,7 @@ entity screen is
     hsync : out std_logic;
     vsync : out std_logic;
     color : out color_t; -- to VGA
-    swapped : out std_logic -- this should trigger a new frame to start rendering.
+    swapped : out std_logic -- in mclk domain. this should trigger a new frame to start rendering.
   );
 end entity screen;
 
@@ -52,9 +52,11 @@ architecture screen of screen is
   signal addr_read : addr_array(0 to 1);
   signal dout_read : data_array(0 to 1);
 
+  signal swap_delayed : std_logic := '0';
+  signal swap_pulse_metastable : std_logic := '0';
+  signal swap_pulse_stable : std_logic_vector(1 downto 0) := (others => '0');
+
 begin
-  -- combinational
-  swapped <= swap;
 
   -- make hsync, vsync registered so that they are delayed by 1 clock cycle.
   -- this is necessary because the reading from bram will take 1 clock cycle.
@@ -67,11 +69,24 @@ begin
     end if;
   end process;
 
+  swap_mclk_proc : process(mclk)
+  begin
+    if rising_edge(mclk) then
+      -- need to lengthen the pulse since the pixel clock could be higher than mclk (but lower than 2x mclk)
+      swap_pulse_metastable <= swap_delayed or swap;
+      -- edge detector
+      swap_pulse_stable(1) <= swap_pulse_metastable;
+      swap_pulse_stable(0) <= swap_pulse_stable(1);
+      swapped <= swap_pulse_stable(1) and not swap_pulse_stable(0);
+    end if;
+  end process;
+
   -- we want to swap when the last pixel is written to the screen.
   swap_proc : process(pixel_clock)
   begin
     if rising_edge(pixel_clock) and swap = '1' then
       writing_to_zero <= not writing_to_zero;
+      swap_delayed <= swap;
     end if;
   end process;
 
