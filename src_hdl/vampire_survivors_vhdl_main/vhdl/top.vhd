@@ -8,6 +8,7 @@ entity top is
     CLK100MHZ : in std_logic;
     CPU_RESETN : in std_logic;
     SW : in std_logic_vector(15 downto 0);
+    LED : out std_logic_vector(15 downto 0);
     VGA_R : out std_logic_vector(3 downto 0);
     VGA_G : out std_logic_vector(3 downto 0);
     VGA_B : out std_logic_vector(3 downto 0);
@@ -31,9 +32,8 @@ architecture Behavioral of top is
   signal pixel : pixel_t;
   signal pixel_valid : std_logic := '0';
   signal swapped : std_logic;
-  signal line_counter : unsigned(8 downto 0);
+  signal line_task_counter : unsigned(9 downto 0);
   signal frame_counter : unsigned(8 downto 0);
-  signal pixel_step_counter : unsigned(1 downto 0);
   
   component vga_clocks
   port
@@ -57,96 +57,59 @@ begin
   VGA_G <= std_logic_vector(color_out.g);
   VGA_B <= std_logic_vector(color_out.b);
 
-  -- color_proc : process(pos)
-  -- begin
-  --   color.r <= (others => '1') when is_edge else (others => '0');
-  --   if vga_hs_temp = '1' then
-  --     color.g <= (others => '1');
-  --   else
-  --     color.g <= pos.x(6 downto 3);
-  --   end if;
-  --   if vga_vs_temp = '1' then
-  --     color.b <= (others => '1');
-  --   else
-  --     color.b <= pos.y(6 downto 3);
-  --   end if;
-  -- end process;
+  LED(15 downto 9) <= std_logic_vector(line_task_counter(6 downto 0));
+  LED(8 downto 0) <= std_logic_vector(frame_counter);
 
   -- temp process for plotting a line to the screen
   line_proc : process(CLK100MHZ)
+    variable line_y : unsigned(8 downto 0);
   begin
+    line_y := line_task_counter(9 downto 1);
     if rising_edge(CLK100MHZ) then
-      pixel_step_counter <= pixel_step_counter + 1;
       if clr = '1' then
-        line_counter <= (others => '0');
+        line_task_counter <= (others => '0');
         frame_counter <= (others => '0');
       else
         if swapped = '1' then
-          frame_counter <= frame_counter + 1;
-          if frame_counter = 31 then
+          if frame_counter = 319 then
             frame_counter <= (others => '0');
-          end if;
-        end if;
-        if pixel_step_counter = 0 then
-          if line_counter = 31 then
-            line_counter <= to_unsigned(0, 9);
           else
-            line_counter <= line_counter + 1;
+            frame_counter <= frame_counter + 1;
+          end if;
+          line_task_counter <= (others => '0');
+        else
+          if line_task_counter < 360 then
+            line_task_counter <= line_task_counter + 1;
           end if;
         end if;
 
-        if pixel_step_counter = 0 then
-          -- write pixel at (frame_counter, line_counter)
-          pixel_valid <= '1';
-          pixel.color.r <= to_unsigned(15, 4);
-          pixel.color.g <= to_unsigned(15, 4);
-          pixel.color.b <= to_unsigned(15, 4);
-          pixel.coord.x <= frame_counter;
-          pixel.coord.y <= line_counter;
-
+        if line_task_counter < 360 then
+          if line_task_counter(0) = '0' then
+            -- write pixel at (frame_counter, line_counter)
+            pixel_valid <= '1';
+            pixel.color.r <= to_unsigned(15, 4);
+            pixel.color.g <= to_unsigned(15, 4);
+            pixel.color.b <= to_unsigned(15, 4);
+            pixel.coord.x <= frame_counter;
+            pixel.coord.y <= line_y;
+  
+          else
+            -- blank out the previous pixel
+            pixel_valid <= '1';
+            pixel.color.r <= to_unsigned(15, 4);
+            pixel.color.g <= to_unsigned(0, 4);
+            pixel.color.b <= to_unsigned(0, 4);
+            pixel.coord.x <= frame_counter - 2;
+            pixel.coord.y <= line_y;
+          end if;
         else
-          -- blank out the previous pixel
-          pixel_valid <= '1';
-          pixel.color.r <= to_unsigned(0, 4);
-          pixel.color.g <= to_unsigned(0, 4);
-          pixel.color.b <= to_unsigned(0, 4);
-          pixel.coord.x <= frame_counter - 1;
-          pixel.coord.y <= line_counter;
+          -- stop writing pixels
+          pixel_valid <= '0';
         end if;
 
-
-        -- if the third bit is 1, then write a pixel
-        -- if line_counter(2) = '1' then
-        --   pixel_valid <= '1';
-        --   pixel.color.r <= to_unsigned(15, 4);
-        --   pixel.color.g <= to_unsigned(7, 4);
-        --   pixel.color.b <= to_unsigned(3, 4);
-        --   pixel.coord.x <= line_counter + 10;
-        --   pixel.coord.y <= line_counter + 10;
-        -- else
-        --   pixel_valid <= '0';
-        -- end if;
       end if;
     end if;
   end process;
-
-
-  -- multi_vga_inst : entity work.multi_vga
-  -- port map(
-  --   clear => clr,
-  --   color_in => color,
-  --   mode => vga_mode,
-  --   clk1 => vga_clk1,
-  --   clk2 => vga_clk2,
-  --   color_out => color_out,
-  --   pos => pos,
-  --   hsync => vga_hs_temp,
-  --   vsync => vga_vs_temp,
-  --   valid => open,
-  --   vga_width => vga_width,
-  --   vga_height => vga_height,
-  --   last_pixel => open
-  -- );
 
   screen_inst : entity work.screen
   port map(

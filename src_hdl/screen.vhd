@@ -42,7 +42,12 @@ architecture screen of screen is
   signal hsync_sig, vsync_sig : std_logic;
   signal pixel_clock : std_logic;
   signal vga_width, vga_height : screen_pos_t;
-  signal swap : std_logic;
+  signal swap : std_logic; -- signal
+  signal swap_toggle : std_logic := '0'; -- register. toggles when swap is high
+  signal swap_toggle_metastable : std_logic := '0'; -- crossing into mclk domain
+  signal swap_toggle_stable : std_logic := '0';
+  signal swap_toggle_stable_delay : std_logic := '0';
+  signal swap_mclk : std_logic := '0'; -- swap, fully in mclk domain
 
   signal we_write : boolean_vector(1 downto 0);
   signal addr_write : addr_array(0 to 1);
@@ -51,10 +56,6 @@ architecture screen of screen is
   signal en_read : boolean_vector(1 downto 0);
   signal addr_read : addr_array(0 to 1);
   signal dout_read : data_array(0 to 1);
-
-  signal swap_delayed : std_logic := '0';
-  signal swap_pulse_metastable : std_logic := '0';
-  signal swap_pulse_stable : std_logic_vector(1 downto 0) := (others => '0');
 
 begin
 
@@ -72,21 +73,28 @@ begin
   swap_mclk_proc : process(mclk)
   begin
     if rising_edge(mclk) then
-      -- need to lengthen the pulse since the pixel clock could be higher than mclk (but lower than 2x mclk)
-      swap_pulse_metastable <= swap_delayed or swap;
-      -- edge detector
-      swap_pulse_stable(1) <= swap_pulse_metastable;
-      swap_pulse_stable(0) <= swap_pulse_stable(1);
-      swapped <= swap_pulse_stable(1) and not swap_pulse_stable(0);
+      swap_toggle_metastable <= swap_toggle;
+      swap_toggle_stable <= swap_toggle_metastable;
+      swap_toggle_stable_delay <= swap_toggle_stable;
+      -- we want swap to pulse high when we detect a toggle
+      if swap_toggle_stable xor swap_toggle_stable_delay then
+        swap_mclk <= '1';
+        writing_to_zero <= not writing_to_zero;
+      else
+        swap_mclk <= '0';
+      end if;
+      
+      swapped <= swap_mclk;
     end if;
   end process;
 
   -- we want to swap when the last pixel is written to the screen.
   swap_proc : process(pixel_clock)
   begin
-    if rising_edge(pixel_clock) and swap = '1' then
-      writing_to_zero <= not writing_to_zero;
-      swap_delayed <= swap;
+    if rising_edge(pixel_clock)then
+      if swap = '1' then
+        swap_toggle <= not swap_toggle;
+      end if;
     end if;
   end process;
 
@@ -118,12 +126,12 @@ begin
   end process;
 
   read_pixel_proc : process(pixel_clock)
-    variable addr_read_full : unsigned(21 downto 0) := (others => '0'); -- TODO: can't work out the math to get 21 bits
+    variable addr_read_full : unsigned(21 downto 0) := (others => '0'); -- TODO: can't work out the math to get 22 bits
   begin
-    addr_read_full := shift_right(pixel_pos.x, 2) + shift_right(pixel_pos.y, 2) * WIDTH;
+    addr_read_full := shift_right(pixel_pos.x, COORD_SHIFT_AMNT) + shift_right(pixel_pos.y, COORD_SHIFT_AMNT) * WIDTH;
     if rising_edge(pixel_clock) then
       -- writing to zero, so read from one
-      if writing_to_zero = '1' then
+      if writing_to_zero = '1' then -- was '1'
         en_read(1) <= true;
         en_read(0) <= false;
         addr_read(1) <= addr_read_full(addr_read(1)'length-1 downto 0);
