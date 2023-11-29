@@ -61,6 +61,10 @@ begin
   LED(8 downto 0) <= std_logic_vector(frame_counter);
 
   -- temp process for plotting a line to the screen
+  -- the idea is to increment the frame counter when a new frame starts.
+  -- then, also when the frame starts, iterate through the line_task_counter until it reaches 2*height, then stop.
+  -- when the line_task_counter is even, plot a pixel at (frame_counter, line_task_counter/2)
+  -- when the line_task_counter is odd, blank out the previous pixel at (frame_counter, (line_task_counter-1)/2)
   line_proc : process(CLK100MHZ)
     variable line_y : unsigned(8 downto 0);
   begin
@@ -96,7 +100,7 @@ begin
           else
             -- blank out the previous pixel
             pixel_valid <= '1';
-            pixel.color.r <= to_unsigned(15, 4);
+            pixel.color.r <= to_unsigned(0, 4);
             pixel.color.g <= to_unsigned(0, 4);
             pixel.color.b <= to_unsigned(0, 4);
             pixel.coord.x <= frame_counter - 2;
