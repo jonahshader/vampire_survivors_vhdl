@@ -40,6 +40,7 @@ set src_files [list \
   [file normalize "${src_common_dir}/multi_vga.vhd"] \
   [file normalize "${src_common_dir}/vga.vhd"] \
   [file normalize "${src_common_dir}/screen.vhd"] \
+  [file normalize "${src_common_dir}/rect_renderer.vhd"] \
   [file normalize "${src_common_dir}/custom_types.vhd"] \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
@@ -63,7 +64,8 @@ set_property file_type {VHDL 2008} [get_files -of_objects [get_filesets sources_
 add_files -fileset constrs_1 ${constr_files}
 
 # Use ExtraTimingOpt implementation strategy for now. TODO: fix 100/200 MHz timing
-set_property strategy Performance_ExtraTimingOpt [get_runs impl_1]
+# set_property strategy Performance_ExtraTimingOpt [get_runs impl_1]
+set_property strategy {Vivado Implementation Defaults} [get_runs impl_1]
 
 if { $gen_bitstream } {
   # Mimic GUI behavior of automatically setting top and file compile order
