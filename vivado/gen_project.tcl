@@ -39,8 +39,10 @@ set_property simulator_language VHDL [current_project]
 set src_files [list \
   [file normalize "${src_common_dir}/multi_vga.vhd"] \
   [file normalize "${src_common_dir}/vga.vhd"] \
+  [file normalize "${src_common_dir}/screen.vhd"] \
   [file normalize "${src_common_dir}/custom_types.vhd"] \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
+  [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
   [file normalize "${src_common_dir}/imports/square_root.vhd"] \
   [file normalize "${src_dir}/ip/vga_clocks/vga_clocks.xci"] \
   [file normalize "${src_dir}/vhdl/top.vhd"] \
