@@ -41,6 +41,7 @@ set src_files [list \
   [file normalize "${src_common_dir}/vga.vhd"] \
   [file normalize "${src_common_dir}/screen.vhd"] \
   [file normalize "${src_common_dir}/rect_renderer.vhd"] \
+  [file normalize "${src_common_dir}/input_sync.vhd"] \
   [file normalize "${src_common_dir}/custom_types.vhd"] \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
