@@ -37,13 +37,6 @@ architecture Behavioral of top is
   signal pixel : pixel_t;
   signal pixel_valid : std_logic := '0';
   signal swapped : std_logic;
-  signal line_counter : unsigned(8 downto 0);
-  signal line_x, line_y : unsigned(8 downto 0);
-
-  signal rect_pixel_out : pixel_t := default_pixel;
-  signal rect_pixel_valid : std_logic := '0';
-  signal rect_done : std_logic := '0';
-  signal draw_line : std_logic := '0';
 
   -- inputs from controller(s)
   signal left_inputs, right_inputs, up_inputs, down_inputs, select_inputs : std_logic_vector(0 downto 0);
@@ -72,82 +65,21 @@ begin
   VGA_G <= std_logic_vector(color_out.g);
   VGA_B <= std_logic_vector(color_out.b);
 
-  LED(15 downto 9) <= std_logic_vector(line_counter(6 downto 0));
-  LED(8 downto 0) <= std_logic_vector(line_x);
-
   left_inputs(0) <= BTNL;
   right_inputs(0) <= BTNR;
   up_inputs(0) <= BTNU;
   down_inputs(0) <= BTND;
   select_inputs(0) <= BTNC;
 
-  move_line_proc : process(CLK100MHZ)
-  begin
-    if rising_edge(CLK100MHZ) then
-      if clr = '1' then
-        line_x <= (others => '0');
-        line_y <= (others => '0');
-      elsif swapped = '1' then
-        if left = '1' then
-          line_x <= line_x - 1;
-        elsif right = '1' then
-          line_x <= line_x + 1;
-        end if;
-        if up = '1' then
-          line_y <= line_y - 1;
-        elsif down = '1' then
-          line_y <= line_y + 1;
-        end if;
-      end if;
-    end if;
-  end process;
-
-  line_proc : process(CLK100MHZ)
-  begin
-    if rising_edge(CLK100MHZ) then
-      if clr = '1' then
-        line_counter <= (others => '0');
-      else
-        if rect_done = '1' then
-          draw_line <= '1';
-        end if;
-
-        if draw_line = '1' then
-          if line_counter = 31 then
-            line_counter <= (others => '0');
-            draw_line <= '0';
-            pixel_valid <= '0';
-          else
-            line_counter <= line_counter + 1;
-            pixel_valid <= '1';
-            pixel.color.r <= to_unsigned(15, 4);
-            pixel.color.g <= to_unsigned(15, 4);
-            pixel.color.b <= to_unsigned(15, 4);
-            pixel.coord.x <= line_x;
-            pixel.coord.y <= line_y + line_counter;
-          end if;
-        else
-          -- write rect pixels
-          pixel_valid <= rect_pixel_valid;
-          pixel <= rect_pixel_out;
-        end if;
-      end if;
-    end if;
-  end process;
-
-  rect_renderer_inst : entity work.rect_renderer
+  gpu_test_inst : entity work.gpu_test
   port map(
     clk => CLK100MHZ,
     reset => clr,
     go => swapped,
-    -- size is 320x180
-    size => (x => to_unsigned(320, 9), y => to_unsigned(180, 9)),
-    -- color is dark green
-    color => (r => to_unsigned(0, 4), g => to_unsigned(4, 4), b => to_unsigned(0, 4)),
-    pixel_out => rect_pixel_out,
-    pixel_valid => rect_pixel_valid,
-    done => rect_done
+    pixel_out => pixel,
+    pixel_valid => pixel_valid
   );
+
 
   screen_inst : entity work.screen
   port map(

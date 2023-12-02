@@ -24,6 +24,14 @@ package custom_types is
   end record;
   function default_frame_coord return frame_coord_t;
 
+  -- use in GPU for translating pixels.
+  type translation_t is record
+    -- we want one more bit for the sign
+    x : signed(frame_pos_t'length downto 0);
+    y : signed(frame_pos_t'length downto 0);
+  end record;
+  function default_translation return translation_t;
+
   -- used for addressing vga pixels. encompasses 1280x960
   subtype screen_pos_t is unsigned(10 downto 0);
   function default_screen_pos return screen_pos_t;
@@ -83,6 +91,12 @@ package body custom_types is
   begin
     return default_value;
   end function default_frame_coord;
+
+  function default_translation return translation_t is
+    variable default_value : translation_t := (x => to_signed(0, frame_pos_t'length + 1), y => to_signed(0, frame_pos_t'length + 1));
+  begin
+    return default_value;
+  end function default_translation;
 
   function default_screen_pos return screen_pos_t is
     variable default_value : screen_pos_t := (others => '0');

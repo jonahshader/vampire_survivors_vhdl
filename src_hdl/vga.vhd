@@ -91,7 +91,7 @@ begin
         pos_look_ahead.x <= current_x - to_unsigned(h_sync_pulse + h_back_porch + 1, current_x'length);
         pos_look_ahead.y <= current_y - to_unsigned(v_sync_pulse + v_back_porch, current_y'length);
 
-        if current_x = to_unsigned(h_visible, current_x'length) - 1 and current_y = to_unsigned(v_visible, current_y'length) - 1 then
+        if pos_look_ahead.x = to_unsigned(h_visible, current_x'length) - 1 and pos_look_ahead.y = to_unsigned(v_visible, current_y'length) - 1 then
             last_pixel <= '1';
         else
             last_pixel <= '0';
