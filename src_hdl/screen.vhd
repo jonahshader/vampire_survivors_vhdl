@@ -69,6 +69,8 @@ begin
       vsync <= vsync_sig;
     end if;
   end process;
+  -- hsync <= hsync_sig;
+  -- vsync <= vsync_sig;
 
   swap_mclk_proc : process(mclk)
   begin
@@ -156,7 +158,7 @@ begin
     pos => open,
     pos_look_ahead => pixel_pos,
     hsync => hsync_sig,
-    vsync => vsync_sig, -- TODO: need to delay hsync, vsync to line up with color
+    vsync => vsync_sig,
     valid => open,
     vga_width => vga_width,
     vga_height => vga_height,
