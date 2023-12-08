@@ -12,7 +12,7 @@ entity tile_renderer is
     TILE_HEIGHT_PX : natural := 16;
     SPRITESHEET_WIDTH_PX : natural := 32;
     SPRITESHEET_HEIGHT_PX : natural := 128;
-    SPRITESHEET_FILENAME : string := ""
+    SPRITESHEET_FILENAME : string := "F:\Documents\Vivado\nexys_a7\ece5710\vampire_survivors_vhdl\src_hdl\rom\forest_tiles_fixed.rom"
   );
   port(
     clk : in std_logic;
@@ -30,6 +30,8 @@ architecture tile_renderer of tile_renderer is
   constant SPRITESHEET_WIDTH_TILES : natural := integer(SPRITESHEET_WIDTH_PX / TILE_WIDTH_PX);
   constant SPRITESHEET_HEIGHT_TILES : natural := integer(SPRITESHEET_HEIGHT_PX / TILE_HEIGHT_PX);
   constant SPRITESHEET_WIDTH_TILES_LOG : natural := integer(log2(real(SPRITESHEET_WIDTH_TILES)));
+  constant SPRITESHEET_WIDTH_PX_LOG : natural := integer(log2(real(SPRITESHEET_WIDTH_PX)));
+  constant SPRITESHEET_HEIGHT_PX_LOG : natural := integer(log2(real(SPRITESHEET_HEIGHT_PX)));
   constant TILE_WIDTH_LOG : natural := integer(log2(real(TILE_WIDTH_PX)));
   constant TILE_HEIGHT_LOG : natural := integer(log2(real(TILE_HEIGHT_PX)));
 
@@ -40,13 +42,17 @@ architecture tile_renderer of tile_renderer is
   signal x_start, y_start, x, y, x_delay, y_delay : unsigned(8 downto 0) := (others => '0'); -- 9 bits should be plenty
 
   -- rom ports
-  signal en_b : boolean := false;
+  -- signal en_b : boolean := false;
   signal addr_b : unsigned(integer(ceil(log2(real(SPRITESHEET_WIDTH_PX * SPRITESHEET_HEIGHT_PX)))) - 1 downto 0) := (others => '0');
   signal dout_b : std_logic_vector(15 downto 0);
 
   type state_t is (idle, draw_tile, last_pix);
   signal state_reg : state_t := idle;
 begin
+
+  pixel_out <= pixel_out_reg;
+  pixel_valid <= pixel_valid_reg;
+  done <= done_reg;
 
   spritesheet_prom : entity work.prom
   generic map (
@@ -56,7 +62,7 @@ begin
   )
   port map (
     clk_b => clk,
-    en_b => en_b,
+    en_b => true,
     addr_b => addr_b,
     dout_b => dout_b
   );
@@ -64,6 +70,9 @@ begin
   state_proc : process(clk)
     variable id_x : unsigned(SPRITESHEET_WIDTH_TILES_LOG-1 downto 0);
     variable id_y : unsigned(tile_id'length - SPRITESHEET_WIDTH_TILES_LOG - 1 downto 0);
+
+    variable x_start_var : unsigned(x_start'length-1 downto 0);
+    variable y_start_var : unsigned(y_start'length-1 downto 0);
   begin
     if rising_edge(clk) then
       if reset = '1' then
@@ -83,12 +92,17 @@ begin
               state_reg <= draw_tile;
               id_x := tile_id(SPRITESHEET_WIDTH_TILES_LOG-1 downto 0);
               id_y := tile_id(tile_id'length-1 downto SPRITESHEET_WIDTH_TILES_LOG);
-              x_start <= shift_left(id_x, TILE_WIDTH_LOG);
-              y_start <= shift_left(id_y, TILE_HEIGHT_LOG);
+              x_start_var := shift_left(resize(id_x, x_start'length), TILE_WIDTH_LOG);
+              y_start_var := shift_left(resize(id_y, y_start'length), TILE_HEIGHT_LOG);
+              x_start <= x_start_var;
+              y_start <= y_start_var;
               x <= (others => '0');
               y <= (others => '0');
 
-              addr_b <= shift_left(id_x, TILE_WIDTH_LOG) + shift_left(id_y, TILE_HEIGHT_LOG + SPRITESHEET_WIDTH_TILES_LOG);
+              addr_b <= resize(
+                resize(x_start_var, addr_b'length) + shift_left(resize(y_start_var, addr_b'length), SPRITESHEET_WIDTH_PX_LOG),
+                addr_b'length
+              );
             end if;
           when draw_tile =>
             -- navigate the tile
@@ -99,18 +113,27 @@ begin
               else
                 -- we aren't done with the row yet, so increment x
                 x <= x + 1;
-                addr_b <= x + x_start + 1 + shift_left(y + y_start, SPRITESHEET_WIDTH_TILES_LOG);
+                addr_b <= resize(
+                  resize(x + x_start + 1, addr_b'length) + shift_left(resize(y + y_start, addr_b'length), SPRITESHEET_WIDTH_PX_LOG),
+                  addr_b'length
+                );
               end if;
             else
               if x = TILE_WIDTH_PX - 1 then
                 -- we finished the row, so go to the next row and reset x
                 x <= (others => '0');
                 y <= y + 1;
-                addr_b <= x_start + shift_left(y + y_start + 1, SPRITESHEET_WIDTH_TILES_LOG);
+                addr_b <= resize(
+                  resize(x_start, addr_b'length) + shift_left(resize(y + y_start + 1, addr_b'length), SPRITESHEET_WIDTH_PX_LOG),
+                  addr_b'length
+                );
               else
                 -- we aren't done with the row yet, so increment x
                 x <= x + 1;
-                addr_b <= x + x_start + 1 + shift_left(y + y_start, SPRITESHEET_WIDTH_TILES_LOG);
+                addr_b <= resize(
+                  resize(x + x_start + 1, addr_b'length) + shift_left(resize(y + y_start, addr_b'length), SPRITESHEET_WIDTH_PX_LOG),
+                  addr_b'length
+                );
               end if;
             end if;
 
@@ -118,7 +141,8 @@ begin
             pixel_out_reg.coord.x <= x;
             pixel_out_reg.coord.y <= y;
             -- pixel only valid when opacity is non-zero
-            pixel_valid_reg <= '1' when dout_b(15 downto 9) = "1111" else '0';
+            pixel_valid_reg <= '0' when dout_b(15 downto 12) = "0000" else '1';
+            -- pixel_valid_reg <= '1'; -- temp
             -- set pixel color
             pixel_out_reg.color.r <= unsigned(dout_b(11 downto 8));
             pixel_out_reg.color.g <= unsigned(dout_b(7 downto 4));

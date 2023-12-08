@@ -4,6 +4,7 @@ use ieee.numeric_std.all;
 use ieee.fixed_pkg.all;
 use ieee.math_real.log2;
 use ieee.math_real.ceil;
+use work.gpu_codes.all;
 
 package custom_types is
   subtype color_component_t is unsigned(3 downto 0);
@@ -56,11 +57,14 @@ package custom_types is
   end record;
   function default_world_coord return world_coord_t;
 
-  type tile_cmd_t is record
-    tile_id : std_logic_vector(3 downto 0);
-    tile_x : unsigned(4 downto 0);
-    tile_y : unsigned(4 downto 0);
+  type gpu_instruction_t is record
+    renderer : gpu_renderer_t;
+    pos : translation_t;
+    size : frame_coord_t;
+    color : color_t;
+    enum : std_logic_vector(11 downto 0);
   end record;
+  function default_gpu_instruction return gpu_instruction_t;
 
 
   -- function prototypes
@@ -135,6 +139,11 @@ package body custom_types is
     return default_value;
   end function default_world_coord;
 
+  function default_gpu_instruction return gpu_instruction_t is
+    variable default_value : gpu_instruction_t := (renderer => rect, pos => default_translation, size => default_frame_coord, color => default_color, enum => (others => '0'));
+  begin
+    return default_value;
+  end function default_gpu_instruction;
 
   function ceil_log2(x : integer) return integer is
   begin

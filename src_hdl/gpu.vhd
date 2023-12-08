@@ -6,7 +6,7 @@ use work.custom_types.all;
 
 -- gpu is the top level entity for the gpu. it takes in commands and outputs pixels.
 -- only processes one command at a time. must wait for done to go high before issuing another command.
--- the gpu has four renderers: rect, circle, line, and sprite. here is how to use them:
+-- the gpu has five renderers: rect, circle, line, sprite, tile. here is how to use them:
 
 -- rect:
 --   renderer = rect
@@ -49,11 +49,7 @@ entity gpu is
     -- gpu only runs one command at a time. wait for done to go high before issuing another command.
     clk : in std_logic;
     reset : in std_logic;
-    renderer : in gpu_renderer_t;
-    pos : in translation_t; -- TODO: is this type acceptable?
-    size : in frame_coord_t; -- for circle, use x for radius, y for unused
-    color : in color_t;
-    enum : in std_logic_vector(11 downto 0);
+    instruction : in gpu_instruction_t;
     go : in std_logic;
     pixel_out : out pixel_t;
     pixel_valid : out std_logic;
@@ -63,11 +59,7 @@ end entity gpu;
 
 architecture gpu of gpu is
   type state_t is (idle, cmd_to_renderer, running);
-  signal renderer_reg : gpu_renderer_t;
-  signal pos_reg : translation_t;
-  signal size_reg : frame_coord_t;
-  signal color_reg : color_t;
-  signal enum_reg : std_logic_vector(11 downto 0);
+  signal instruction_reg : gpu_instruction_t;
 
   signal pixel_out_preshift_reg : pixel_t := default_pixel;
   signal pixel_valid_preshift_reg : std_logic := '0';
@@ -113,14 +105,10 @@ begin
       tile_go <= '0';
 
       if go = '1' then
-        renderer_reg <= renderer;
-        pos_reg <= pos;
-        size_reg <= size;
-        color_reg <= color;
-        enum_reg <= enum;
+        instruction_reg <= instruction;
 
         -- make go high for the appropriate renderer
-        case renderer is
+        case instruction.renderer is
           when rect =>
             rect_go <= '1';
           when circle =>
@@ -137,7 +125,7 @@ begin
       end if;
 
       -- mux the outputs of the renderers
-      case renderer_reg is
+      case instruction_reg.renderer is
         when rect =>
           pixel_out_preshift_reg <= rect_pixel_out;
           pixel_valid_preshift_reg <= rect_pixel_valid;
@@ -170,7 +158,7 @@ begin
   port map(
     clk => clk,
     reset => reset,
-    translation => pos,
+    translation => instruction.pos,
     go => go,
     pixel_in => pixel_out_preshift_reg,
     pixel_in_valid => pixel_valid_preshift_reg,
@@ -189,8 +177,8 @@ begin
     clk => clk,
     reset => reset, 
     go => rect_go,
-    size => size_reg,
-    color => color_reg,
+    size => instruction_reg.size,
+    color => instruction_reg.color,
     pixel_out => rect_pixel_out,
     pixel_valid => rect_pixel_valid,
     done => rect_done
@@ -201,8 +189,8 @@ begin
     clk => clk,
     reset => reset,
     go => circle_go,
-    radius => size_reg.x,
-    color => color_reg,
+    radius => instruction_reg.size.x,
+    color => instruction_reg.color,
     pixel_out => circle_pixel_out,
     pixel_valid => circle_pixel_valid,
     done => circle_done
@@ -213,8 +201,8 @@ begin
     clk => clk,
     reset => reset,
     go => line_go,
-    endpoint => size_reg,
-    color => color_reg,
+    endpoint => instruction_reg.size,
+    color => instruction_reg.color,
     pixel_out => line_pixel_out,
     pixel_valid => line_pixel_valid,
     done => line_done
@@ -225,7 +213,7 @@ begin
     clk => clk,
     reset => reset,
     go => sprite_go,
-    sprite_index => enum_reg,
+    sprite_index => instruction_reg.enum,
     pixel_out => sprite_pixel_out,
     pixel_valid => sprite_pixel_valid,
     done => sprite_done
@@ -236,7 +224,7 @@ begin
     clk => clk,
     reset => reset,
     go => tile_go,
-    tile_id => unsigned(enum_reg(7 downto 0)),
+    tile_id => unsigned(instruction_reg.enum(7 downto 0)),
     pixel_out => tile_pixel_out,
     pixel_valid => tile_pixel_valid,
     done => tile_done

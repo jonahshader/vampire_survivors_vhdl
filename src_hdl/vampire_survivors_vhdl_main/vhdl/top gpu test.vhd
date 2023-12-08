@@ -27,14 +27,11 @@ architecture Behavioral of top is
   signal pos : screen_coord_t;
   signal color, color_out : color_t;
   signal vga_mode : std_logic;
+  signal is_edge : boolean;
   signal vga_width, vga_height : unsigned(10 downto 0);
   signal vga_hs_temp, vga_vs_temp : std_logic;
   
   signal vga_clk1, vga_clk2 : std_logic;
-
-  signal gpu_instruction : gpu_instruction_t;
-  signal gpu_go : std_logic;
-  signal gpu_done : std_logic;
 
 
   signal pixel : pixel_t;
@@ -59,6 +56,8 @@ architecture Behavioral of top is
 begin
   clr <= not CPU_RESETN;
   vga_mode <= SW(0);
+  is_edge <= pos.x < 64 or pos.x >= vga_width - 64 or pos.y < 64 or pos.y >= vga_height - 64;
+
   vga_hs <= vga_hs_temp;
   vga_vs <= vga_vs_temp;
 
@@ -72,26 +71,13 @@ begin
   down_inputs(0) <= BTND;
   select_inputs(0) <= BTNC;
 
-  gpu_inst : entity work.gpu
-  port map(
-    clk => CLK100MHZ,
-    reset => clr,
-    instruction => gpu_instruction,
-    go => gpu_go,
-    done => gpu_done,
-    pixel_out => pixel,
-    pixel_valid => pixel_valid
-  );
-
-  render_level1_inst : entity work.render_level1
+  gpu_test_inst : entity work.gpu_test
   port map(
     clk => CLK100MHZ,
     reset => clr,
     go => swapped,
-    gpu_instruction => gpu_instruction,
-    gpu_go => gpu_go,
-    gpu_done => gpu_done,
-    done => open -- TODO: currently don't care but use this to chain rendering
+    pixel_out => pixel,
+    pixel_valid => pixel_valid
   );
 
 
