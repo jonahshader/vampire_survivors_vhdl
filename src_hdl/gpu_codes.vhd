@@ -7,4 +7,5 @@ package gpu_codes is
   constant circle :   gpu_renderer_t := "001";
   constant line :     gpu_renderer_t := "010";
   constant sprite :   gpu_renderer_t := "011";
+  constant tile :     gpu_renderer_t := "100";
 end gpu_codes;

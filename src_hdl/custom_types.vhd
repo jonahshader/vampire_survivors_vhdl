@@ -56,6 +56,12 @@ package custom_types is
   end record;
   function default_world_coord return world_coord_t;
 
+  type tile_cmd_t is record
+    tile_id : std_logic_vector(3 downto 0);
+    tile_x : unsigned(4 downto 0);
+    tile_y : unsigned(4 downto 0);
+  end record;
+
 
   -- function prototypes
   function ceil_log2(x : integer) return integer;

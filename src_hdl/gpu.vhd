@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use work.gpu_codes.all;
 use work.custom_types.all;
 
@@ -35,6 +36,13 @@ use work.custom_types.all;
 --   size = unused (TODO: maybe use for sprite resizing?)
 --   color = unused (TODO: maybe use for sprite tint?)
 --   enum = sprite number
+
+-- tile:
+--   renderer = tile
+--   pos = top left corner of tile
+--   size = unused
+--   color = unused
+--   enum = tile_id
 
 entity gpu is
   port(
@@ -85,6 +93,11 @@ architecture gpu of gpu is
   signal sprite_pixel_valid : std_logic;
   signal sprite_done : std_logic;
 
+  signal tile_go : std_logic := '0';
+  signal tile_pixel_out : pixel_t;
+  signal tile_pixel_valid : std_logic;
+  signal tile_done : std_logic;
+
 begin
 
   gpu_proc : process(clk)
@@ -97,6 +110,7 @@ begin
       circle_go <= '0';
       line_go <= '0';
       sprite_go <= '0';
+      tile_go <= '0';
 
       if go = '1' then
         renderer_reg <= renderer;
@@ -115,6 +129,8 @@ begin
             line_go <= '1';
           when sprite =>
             sprite_go <= '1';
+          when tile =>
+            tile_go <= '1';
           when others =>
             null;
         end case;
@@ -138,6 +154,10 @@ begin
           pixel_out_preshift_reg <= sprite_pixel_out;
           pixel_valid_preshift_reg <= sprite_pixel_valid;
           done_preshift_reg <= sprite_done;
+        when tile =>
+          pixel_out_preshift_reg <= tile_pixel_out;
+          pixel_valid_preshift_reg <= tile_pixel_valid;
+          done_preshift_reg <= tile_done;
         when others =>
           pixel_out_preshift_reg <= default_pixel;
           pixel_valid_preshift_reg <= '0';
@@ -209,6 +229,17 @@ begin
     pixel_out => sprite_pixel_out,
     pixel_valid => sprite_pixel_valid,
     done => sprite_done
+  );
+
+  tile_renderer_inst : entity work.tile_renderer
+  port map(
+    clk => clk,
+    reset => reset,
+    go => tile_go,
+    tile_id => unsigned(enum_reg(7 downto 0)),
+    pixel_out => tile_pixel_out,
+    pixel_valid => tile_pixel_valid,
+    done => tile_done
   );
 
 end gpu;
