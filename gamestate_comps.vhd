@@ -35,7 +35,7 @@ package gamestate_comps is
         flip : out std_logic;
         c1 : out std_logic_vector (9 downto 0);
         r1 : out std_logic_vector (9 downto 0);
-        ld : out std_logic_vector (3 downto 0);
+        --ld : out std_logic_vector (3 downto 0);
         mvm_spd : in STD_LOGIC_VECTOR(3 downto 0)  -- Input for movement speed
         );
     end component;
