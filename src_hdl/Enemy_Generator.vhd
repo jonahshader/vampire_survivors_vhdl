@@ -46,7 +46,7 @@ signal spawn_position: world_coord_t;
 signal hp1,hp2,hp3,hp4: std_logic_vector(2 downto 0);
     
 begin
-w.x <= "000001111000.000000"; ---- spwaning from west side back pouch 
+w.x <= to_sfixed(120, w.x);  ----"000001111000.000000"; ---- spwaning from west side back pouch 
 w.y <="000100010011.000000";
 e.x <="001100011000.000000"; ---- spwaning from east side front pouch 
 e.y<="000100010011.000000";
