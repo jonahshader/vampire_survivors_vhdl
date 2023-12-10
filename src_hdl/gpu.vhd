@@ -32,10 +32,10 @@ use work.custom_types.all;
 
 -- sprite:
 --   renderer = sprite
---   pos = top left corner of sprite
---   size = unused (TODO: maybe use for sprite resizing?)
+--   pos = screen position to draw sprite
+--   size = width and height of sprite region to draw
 --   color = unused (TODO: maybe use for sprite tint?)
---   enum = sprite number
+--   enum = top left corner of sprite region to draw
 
 -- tile:
 --   renderer = tile

@@ -62,7 +62,7 @@ package custom_types is
     pos : translation_t;
     size : frame_coord_t;
     color : color_t;
-    enum : std_logic_vector(11 downto 0);
+    enum : std_logic_vector(15 downto 0);
   end record;
   function default_gpu_instruction return gpu_instruction_t;
 

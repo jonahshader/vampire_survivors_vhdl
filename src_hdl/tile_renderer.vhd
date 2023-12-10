@@ -27,7 +27,6 @@ entity tile_renderer is
 end entity tile_renderer;
 
 architecture tile_renderer of tile_renderer is
-   -- TODO: try without integer()
   constant SPRITESHEET_WIDTH_TILES : natural := integer(SPRITESHEET_WIDTH_PX / TILE_WIDTH_PX);
   constant SPRITESHEET_HEIGHT_TILES : natural := integer(SPRITESHEET_HEIGHT_PX / TILE_HEIGHT_PX);
   constant SPRITESHEET_WIDTH_TILES_LOG : natural := integer(log2(real(SPRITESHEET_WIDTH_TILES)));
@@ -49,8 +48,8 @@ architecture tile_renderer of tile_renderer is
 
   type state_t is (idle, draw_tile, last_pix);
   signal state_reg : state_t := idle;
-begin
 
+begin
   pixel_out <= pixel_out_reg;
   pixel_valid <= pixel_valid_reg;
   done <= done_reg;
@@ -109,7 +108,7 @@ begin
             -- navigate the tile
             if y = TILE_WIDTH_PX - 1 then
               if x = TILE_HEIGHT_PX - 1 then
-                -- we reached the end of the tile. go to idle_1 to allow pipeline to finish
+                -- we reached the end of the tile. go to last_pix to allow pipeline to finish
                 state_reg <= last_pix;
               else
                 -- we aren't done with the row yet, so increment x
