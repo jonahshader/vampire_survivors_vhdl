@@ -46,6 +46,15 @@ set src_files [list \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
   [file normalize "${src_common_dir}/imports/square_root.vhd"] \
+  [file normalize "${src_common_dir}/clkdiv.vhd"] \
+  [file normalize "${src_common_dir}/keyboard_ctrl.vhd"] \
+  [file normalize "${src_common_dir}/keybinds.vhd"] \
+  [file normalize "${src_common_dir}/enem_gen.vhd"] \
+  [file normalize "${src_common_dir}/gamestate_comps.vhd"] \
+  [file normalize "${src_common_dir}/gamestate.vhd"] \
+  [file normalize "${src_common_dir}/inv_mng.vhd"] \
+  [file normalize "${src_common_dir}/item_gen.vhd"] \
+  [file normalize "${src_common_dir}/player_stat.vhd"] \
   [file normalize "${src_dir}/ip/vga_clocks/vga_clocks.xci"] \
   [file normalize "${src_dir}/vhdl/top.vhd"] \
 ]
