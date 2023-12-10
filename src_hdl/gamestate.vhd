@@ -4,6 +4,9 @@ use work.gamestate_comps.all;
 
 entity gamestate is
     port (
+        -- from screen
+        -- add swapped signal to align with my done signals
+
         mclk : in STD_LOGIC;
         clr : in STD_LOGIC;
         -- gamestate takes in keyboard inputs
@@ -12,12 +15,19 @@ entity gamestate is
         
         -- item gen, read by the GPU (based on the output, renders a different item)
         item_out : out STD_LOGIC_VECTOR (2 downto 0);
-        
+        -- item x and y (8 bit generator, 7 bit generator)
+        -- Timer based spawn time
+        -- done (held high)
+
         --  character movement (needs to go to renderer)
-        c1 : out std_logic_vector (9 downto 0);
-        r1 : out std_logic_vector (9 downto 0);
-        flip : out std_logic;
-        
+        c1 : out std_logic_vector (9 downto 0); -- match coords sfixed
+        r1 : out std_logic_vector (9 downto 0); -- 
+        flip : out std_logic; 
+        -- type sprite (constant)
+        -- 
+
+
+
         -- inventory management, outputs what item we will render and with what level (if needed)
         whip : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Whip
         garlic : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Garlic
@@ -28,7 +38,7 @@ entity gamestate is
         
         -- hp out from player_stat
         hp : out STD_LOGIC_VECTOR(7 downto 0)
-
+        
     );
 end gamestate;
 

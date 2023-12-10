@@ -1,3 +1,4 @@
+-- binds keys from keyboard and adds functionality
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
@@ -31,7 +32,7 @@ architecture keybinds of keybinds is
    constant ESC_key : std_logic_vector(7 downto 0) := X"76"; -- Pause Game
    constant SPC_key : std_logic_vector(7 downto 0) := X"29"; -- Select menu
    
-   -- for character movement side
+   -- for character movement side, needs to be updated
    constant c1s : integer := 23;
    constant r1s : integer := 250;
    

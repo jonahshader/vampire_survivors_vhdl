@@ -5,15 +5,15 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity inv_mng is
     port (
-        clk190 : in STD_LOGIC;
+        clk190 : in STD_LOGIC; -- mclk
         -- character c1 and r1 (x,y)
         c1 : in STD_LOGIC_VECTOR(9 downto 0);
         r1 : in STD_LOGIC_VECTOR(9 downto 0);
-        -- randomly generated item (x,y)
+        -- randomly generated item (x,y) need to add the random generator here
         x : in STD_LOGIC_VECTOR(9 downto 0);
         y : in STD_LOGIC_VECTOR(9 downto 0);
         -- randomly generated item
-        item_out : in STD_LOGIC_VECTOR(2 downto 0);
+        item_out : in STD_LOGIC_VECTOR(2 downto 0); -- Update with Han's random generator
         
         -- registers to hold items and their level
         whip : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Whip
@@ -49,32 +49,43 @@ begin
             wings <= "0000";
 
             -- Check if the current position matches x and y
-            if (c1 = x and r1 = y) then
+
+            -- Definition of items
+                -- 000 - No Item
+                -- 001 - Whip (basic attack)
+                -- 010 - Garlic (radius shield)
+                -- 011 - Mage (will determine later)
+                -- 100 - Armour (armour %)
+                -- 101 - Gloves (attack speed)
+                -- 111 - Wings (movement speed)
+
+            if (c1 = x and r1 = y) then -- rectangle collider
                 case item_out is
-                    when "000" =>
+                    when "001" =>   --  whip
                         if (whip_temp < ITEM_LEVEL_MAX) then
                             whip_temp <= whip_temp + 1;
                         end if;
-                    when "001" =>
+                    when "010" =>   -- 010 is Garlic
                         if (garlic_temp < ITEM_LEVEL_MAX) then
                             garlic_temp <= garlic_temp + 1;
                         end if;
-                    when "010" =>
+                    when "011" =>   -- Mage
                         if (mage_temp < ITEM_LEVEL_MAX) then
                             mage_temp <= mage_temp + 1;
                         end if;
-                    when "011" =>
+                    when "100" =>   -- Armour
                         if (armour_temp < ITEM_LEVEL_MAX) then
                             armour_temp <= armour_temp + 1;
                         end if;
-                    when "100" =>
+                    when "101" =>   -- Gloves
                         if (gloves_temp < ITEM_LEVEL_MAX) then
                             gloves_temp <= gloves_temp + 1;
                         end if;
-                    when "101" =>
+                    when "111" =>   -- Wings
                         if (wings_temp < ITEM_LEVEL_MAX) then
                             wings_temp <= wings_temp + 1;
                         end if;
+                    
                     when others =>
                         null; -- No other items
                 end case;
