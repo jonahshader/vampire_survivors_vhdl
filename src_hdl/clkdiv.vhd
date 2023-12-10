@@ -1,3 +1,4 @@
+-- clkDivider used for keyboard, also for updating play_stats, will be updated after to screen frame logic
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_unsigned.all;

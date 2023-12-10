@@ -12,11 +12,13 @@ entity gamestate is
         
         -- item gen, read by the GPU (based on the output, renders a different item)
         item_out : out STD_LOGIC_VECTOR (2 downto 0);
-        
+        -- item x and y
+
         --  character movement (needs to go to renderer)
         c1 : out std_logic_vector (9 downto 0);
         r1 : out std_logic_vector (9 downto 0);
         flip : out std_logic;
+        -- type sprite (constant)
         
         -- inventory management, outputs what item we will render and with what level (if needed)
         whip : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Whip

@@ -19,7 +19,7 @@ entity player_stat is
         --item and modifers
         attk_spd : out STD_LOGIC_VECTOR(3 downto 0);
         mvm_spd : out STD_LOGIC_VECTOR(3 downto 0);
-        armr_perc : out STD_LOGIC_VECTOR(3 downto 0);
+        armr_perc : out STD_LOGIC_VECTOR(3 downto 0); -- binary to decimal conversaion
         --hp
         hp : out STD_LOGIC_VECTOR(7 downto 0)
     );
@@ -51,7 +51,7 @@ begin
             mvm_spd_temp <= wings * mvm_spd_modifier;
 
             -- Damage calculation
-            if x1 = c1 and y1 = r1 then
+            if x1 = c1 and y1 = r1 then -- rectangle collider
                 if armour > "0000" then
                     armr_perc_temp <= armr_perc_temp - "0101"; -- Subtract 5 from armour, can change this after for damage amount
                 else
