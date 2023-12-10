@@ -55,6 +55,10 @@ set src_files [list \
   [file normalize "${src_common_dir}/inv_mng.vhd"] \
   [file normalize "${src_common_dir}/item_gen.vhd"] \
   [file normalize "${src_common_dir}/player_stat.vhd"] \
+  [file normalize "${src_common_dir}/Bram_control.vhd"] \
+  [file normalize "${src_common_dir}/Enemy_Generator.vhd"] \
+  [file normalize "${src_common_dir}/Enemy_update_ctrl.vhd"] \
+  [file normalize "${src_common_dir}/RandomNumberGenerator.vhd"] \
   [file normalize "${src_dir}/ip/vga_clocks/vga_clocks.xci"] \
   [file normalize "${src_dir}/vhdl/top.vhd"] \
 ]
