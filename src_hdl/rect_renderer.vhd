@@ -34,6 +34,9 @@ begin
     if rising_edge(clk) then
       if reset = '1' then
         state_reg <= idle;
+        done_reg <= '0';
+        pixel_valid_reg <= '0';
+        pixel_out_reg <= default_pixel;
       else
         case state_reg is
           when idle =>

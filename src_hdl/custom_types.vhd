@@ -4,6 +4,7 @@ use ieee.numeric_std.all;
 use ieee.fixed_pkg.all;
 use ieee.math_real.log2;
 use ieee.math_real.ceil;
+use work.gpu_codes.all;
 
 package custom_types is
   subtype color_component_t is unsigned(3 downto 0);
@@ -23,6 +24,14 @@ package custom_types is
     y : frame_pos_t;
   end record;
   function default_frame_coord return frame_coord_t;
+
+  -- use in GPU for translating pixels.
+  type translation_t is record
+    -- we want one more bit for the sign
+    x : signed(frame_pos_t'length downto 0);
+    y : signed(frame_pos_t'length downto 0);
+  end record;
+  function default_translation return translation_t;
 
   -- used for addressing vga pixels. encompasses 1280x960
   subtype screen_pos_t is unsigned(10 downto 0);
@@ -47,6 +56,15 @@ package custom_types is
     y : world_pos_t;
   end record;
   function default_world_coord return world_coord_t;
+
+  type gpu_instruction_t is record
+    renderer : gpu_renderer_t;
+    pos : translation_t;
+    size : frame_coord_t;
+    color : color_t;
+    enum : std_logic_vector(11 downto 0);
+  end record;
+  function default_gpu_instruction return gpu_instruction_t;
 
 
   -- function prototypes
@@ -84,6 +102,12 @@ package body custom_types is
     return default_value;
   end function default_frame_coord;
 
+  function default_translation return translation_t is
+    variable default_value : translation_t := (x => to_signed(0, frame_pos_t'length + 1), y => to_signed(0, frame_pos_t'length + 1));
+  begin
+    return default_value;
+  end function default_translation;
+
   function default_screen_pos return screen_pos_t is
     variable default_value : screen_pos_t := (others => '0');
   begin
@@ -115,6 +139,11 @@ package body custom_types is
     return default_value;
   end function default_world_coord;
 
+  function default_gpu_instruction return gpu_instruction_t is
+    variable default_value : gpu_instruction_t := (renderer => rect, pos => default_translation, size => default_frame_coord, color => default_color, enum => (others => '0'));
+  begin
+    return default_value;
+  end function default_gpu_instruction;
 
   function ceil_log2(x : integer) return integer is
   begin

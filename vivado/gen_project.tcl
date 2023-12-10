@@ -40,10 +40,21 @@ set src_files [list \
   [file normalize "${src_common_dir}/multi_vga.vhd"] \
   [file normalize "${src_common_dir}/vga.vhd"] \
   [file normalize "${src_common_dir}/screen.vhd"] \
+  [file normalize "${src_common_dir}/gpu.vhd"] \
+  [file normalize "${src_common_dir}/gpu_test.vhd"] \
+  [file normalize "${src_common_dir}/gpu_codes.vhd"] \
   [file normalize "${src_common_dir}/rect_renderer.vhd"] \
+  [file normalize "${src_common_dir}/circle_renderer.vhd"] \
+  [file normalize "${src_common_dir}/line_renderer.vhd"] \
+  [file normalize "${src_common_dir}/sprite_renderer.vhd"] \
+  [file normalize "${src_common_dir}/tile_renderer.vhd"] \
+  [file normalize "${src_common_dir}/pixel_translator.vhd"] \
   [file normalize "${src_common_dir}/input_sync.vhd"] \
+  [file normalize "${src_common_dir}/level_pkg.vhd"] \
+  [file normalize "${src_common_dir}/render_level1.vhd"] \
   [file normalize "${src_common_dir}/custom_types.vhd"] \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
+  [file normalize "${src_common_dir}/imports/prom.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
   [file normalize "${src_common_dir}/imports/square_root.vhd"] \
   [file normalize "${src_common_dir}/clkdiv.vhd"] \
@@ -59,6 +70,8 @@ set src_files [list \
   [file normalize "${src_common_dir}/Enemy_Generator.vhd"] \
   [file normalize "${src_common_dir}/Enemy_update_ctrl.vhd"] \
   [file normalize "${src_common_dir}/RandomNumberGenerator.vhd"] \
+  [file normalize "${src_common_dir}/imports/plotline.vhd"] \
+  [file normalize "${src_common_dir}/rom/forest_tiles_fixed.rom"] \
   [file normalize "${src_dir}/ip/vga_clocks/vga_clocks.xci"] \
   [file normalize "${src_dir}/vhdl/top.vhd"] \
 ]
