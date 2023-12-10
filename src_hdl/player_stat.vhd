@@ -50,7 +50,7 @@ begin
             -- Calculate mvm_spd_temp based on wings input
             mvm_spd_temp <= wings * mvm_spd_modifier;
 
-            -- Damage calculation
+            -- Damage calculation (send this to automate attack)
             if x1 = c1 and y1 = r1 then -- rectangle collider
                 if armour > "0000" then
                     armr_perc_temp <= armr_perc_temp - "0101"; -- Subtract 5 from armour, can change this after for damage amount
