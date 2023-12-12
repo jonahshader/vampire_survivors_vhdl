@@ -55,6 +55,7 @@ set src_files [list \
   [file normalize "${src_common_dir}/render_player.vhd"] \
   [file normalize "${src_common_dir}/custom_types.vhd"] \
   [file normalize "${src_common_dir}/render_game.vhd"] \
+  [file normalize "${src_common_dir}/render_enemies.vhd"] \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
   [file normalize "${src_common_dir}/imports/prom.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
@@ -72,6 +73,9 @@ set src_files [list \
   [file normalize "${src_common_dir}/Enemy_Generator.vhd"] \
   [file normalize "${src_common_dir}/Enemy_update_ctrl.vhd"] \
   [file normalize "${src_common_dir}/Enemy_update_unit.vhd"] \
+  [file normalize "${src_common_dir}/enemy_update_rewrite.vhd"] \
+  [file normalize "${src_common_dir}/enemy_state_rewrite.vhd"] \
+  [file normalize "${src_common_dir}/render_item.vhd"] \
   [file normalize "${src_common_dir}/RandomNumberGenerator.vhd"] \
   [file normalize "${src_common_dir}/imports/plotline.vhd"] \
   [file normalize "${src_common_dir}/rom/forest_tiles_fixed.rom"] \

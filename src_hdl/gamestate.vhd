@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
+use work.custom_types.all;
 
 entity gamestate is
     port ( 
@@ -42,7 +43,14 @@ entity gamestate is
         mage : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Mage
         armour : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Armour
         gloves : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Gloves
-        wings : out STD_LOGIC_VECTOR(3 downto 0)  -- Outputs for Wings
+        wings : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Wings
+
+        -- enemy to gpu stuff
+        ready_to_start_rendering : out std_logic;
+        request_next_enemy : in std_logic;
+        enemy_to_render : out enemy_t;
+        enemy_valid : out std_logic;
+        render_done : out std_logic
         
         -- attacks from auto_atk.vhd, this will be for whip, mage, garlic attacks.
     );
@@ -72,8 +80,10 @@ architecture gamestate_architecture of gamestate is
     signal kb_left, kb_right, kb_up, kb_down, kb_enter : std_logic;
     signal left, right, up, down, enter : std_logic;
     signal left_vec, right_vec, up_vec, down_vec, enter_vec : std_logic_vector(1 downto 0);
-    
+
 begin
+
+
 
     -- input sync stuff
     left_vec(0) <= kb_left;
@@ -210,6 +220,20 @@ begin
     --         x1 => x1,
     --         y1 => y1
     --     );
+
+    enem_rewrite : entity work.enemy_state_rewrite
+    port map(
+        clk => mclk,
+        reset => clr,
+        swapped => swapped,
+        player_x => unsigned(player_x),
+        player_y => unsigned(player_y),
+        ready_to_start_rendering => ready_to_start_rendering,
+        request_next_enemy => request_next_enemy,
+        enemy_to_render => enemy_to_render,
+        enemy_valid => enemy_valid,
+        render_done => render_done
+    );
     
     auto_atk_inst : entity work.auto_atk    -- this needs to be worked on
         port map (

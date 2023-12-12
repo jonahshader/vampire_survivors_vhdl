@@ -42,7 +42,8 @@ begin
         elsif right = '1' then
           player_x_reg <= player_x_reg + speed;
           flipped <= '0';
-        elsif up = '1' then
+        end if;
+        if up = '1' then
           player_y_reg <= player_y_reg - speed;
         elsif down = '1' then
           player_y_reg <= player_y_reg + speed;

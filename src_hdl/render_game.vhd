@@ -12,8 +12,8 @@ entity render_game is
 
     -- gamestate to render
     item_in : in std_logic_vector(2 downto 0);
-    itemx_in : in std_logic_vector(15 downto 0);
-    itemy_in : in std_logic_vector(15 downto 0);
+    itemx_in : in std_logic_vector(7 downto 0);
+    itemy_in : in std_logic_vector(6 downto 0);
     player_x : in std_logic_vector(9 downto 0);
     player_y : in std_logic_vector(9 downto 0);
     player_hp : in std_logic_vector(7 downto 0);
@@ -25,6 +25,12 @@ entity render_game is
     armour : in std_logic_vector(3 downto 0);
     gloves : in std_logic_vector(3 downto 0);
     wings : in std_logic_vector(3 downto 0);
+    
+    enem_ready_to_start_rendering : in std_logic;
+    enem_request_next_enemy : out std_logic;
+    enem_enemy_to_render : in enemy_t;
+    enem_enemy_valid : in std_logic;
+    enem_render_done : in std_logic;
 
     -- to screen
     pixel_out : out pixel_t;
@@ -49,10 +55,21 @@ architecture rtl of render_game is
   signal plr_gpu_go : std_logic;
   signal plr_done : std_logic;
 
+  signal item_go : std_logic := '0';
+  signal item_gpu_instruction : gpu_instruction_t;
+  signal item_gpu_go : std_logic;
+  signal item_done : std_logic;
+
+  signal enem_go : std_logic := '0';
+  signal enem_gpu_instruction : gpu_instruction_t;
+  signal enem_gpu_go : std_logic;
+  signal enem_done : std_logic;
+
+
   -- mux needs time to switch. this bit is used to give it that time
   signal render_go_delay : std_logic := '0';
 
-  type render_step_state_t is (idle, render_map, render_player); -- TODO: add more
+  type render_step_state_t is (idle, render_map, render_player, render_item, render_enemies); -- TODO: add more
   signal state : render_step_state_t := idle;
 
 begin
@@ -82,10 +99,7 @@ begin
         -- only proceed with new cmd if previous one is done
         case state is
           when idle =>
-            if start = '1' then
-              state <= render_map;
-              render_go_delay <= '0';
-            end if;
+            null;
           when render_map =>
             if lvl1_done = '1' then
               state <= render_player;
@@ -96,14 +110,35 @@ begin
             end if;
           when render_player =>
             if plr_done = '1' then
-              state <= idle;
+              state <= render_item;
               render_go_delay <= '0';
             elsif render_go_delay = '0' then
               render_go_delay <= '1';
               plr_go <= '1'; -- this should only go high for one clock cycle
             end if;
+          when render_item =>
+            if item_done = '1' then
+              state <= render_enemies;
+              render_go_delay <= '0';
+            elsif render_go_delay = '0' then
+              render_go_delay <= '1';
+              item_go <= '1'; -- this should only go high for one clock cycle
+            end if;
+          when render_enemies =>
+            if enem_done = '1' then
+              state <= idle;
+              render_go_delay <= '0';
+            elsif render_go_delay = '0' then
+              render_go_delay <= '1';
+              enem_go <= '1'; -- this should only go high for one clock cycle
+            end if;
           when others => null;
         end case;
+
+        if start = '1' then
+          state <= render_map;
+          render_go_delay <= '0';
+        end if;
       end if;
     end if;
   end process;
@@ -121,6 +156,12 @@ begin
       when render_player =>
         gpu_go <= plr_gpu_go;
         gpu_instruction <= plr_gpu_instruction;
+      when render_item =>
+        gpu_go <= item_gpu_go;
+        gpu_instruction <= item_gpu_instruction;
+      when render_enemies =>
+        gpu_go <= enem_gpu_go;
+        gpu_instruction <= enem_gpu_instruction;
       when others => null;
     end case;
   end process;
@@ -160,6 +201,38 @@ begin
     gpu_go => plr_gpu_go,
     gpu_done => gpu_done,
     done => plr_done
+  );
+
+  render_item_inst : entity work.render_item
+  port map(
+    clk => clk,
+    reset => reset,
+    go => item_go,
+    item_out => item_in,
+    itemx_out => unsigned(itemx_in),
+    itemy_out => unsigned(itemy_in),
+    gpu_instruction => item_gpu_instruction,
+    gpu_go => item_gpu_go,
+    gpu_done => gpu_done,
+    done => item_done
+  );
+
+  render_enemies_inst : entity work.render_enemies
+  port map(
+    clk => clk,
+    reset => reset,
+    go => enem_go,
+
+    ready_to_start_rendering => enem_ready_to_start_rendering,
+    request_next_enemy => enem_request_next_enemy,
+    enemy_to_render => enem_enemy_to_render,
+    enemy_valid => enem_enemy_valid,
+    render_done => enem_render_done,
+
+    gpu_instruction => enem_gpu_instruction,
+    gpu_go => enem_gpu_go,
+    gpu_done => gpu_done,
+    done => enem_done
   );
 
   

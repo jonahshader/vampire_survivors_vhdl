@@ -8,9 +8,9 @@ use ieee.math_real.log2;
 
 entity render_player is
   generic(
-    HEALTH_MAX : integer := 256;
-    HEALTH_RENDER_SCALE_POW : integer := 4;
-    ARMOR_RENDER_SCALE_POW : integer := 4;
+    HEALTH_MAX : integer := 100;
+    HEALTH_RENDER_SCALE_POW : integer := 3;
+    ARMOR_RENDER_SCALE_POW : integer := 3;
     BAR_THICKNESS : integer := 4;
     BAR_SPACING : integer := 1;
     PLAYER_WIDTH : integer := 24;

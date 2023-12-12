@@ -56,6 +56,12 @@ architecture Behavioral of top is
   signal gloves : std_logic_vector(3 downto 0);
   signal wings : std_logic_vector(3 downto 0);
 
+  signal enem_ready_to_start_rendering : std_logic;
+  signal enem_request_next_enemy : std_logic;
+  signal enem_enemy_to_render : enemy_t;
+  signal enem_enemy_valid : std_logic;
+  signal enem_render_done : std_logic;
+
   component vga_clocks
   port
     (-- Clock in ports
@@ -100,7 +106,13 @@ begin
     mage => mage,
     armour => armour,
     gloves => gloves,
-    wings => wings
+    wings => wings,
+    
+    ready_to_start_rendering => enem_ready_to_start_rendering,
+    request_next_enemy => enem_request_next_enemy,
+    enemy_to_render => enem_enemy_to_render,
+    enemy_valid => enem_enemy_valid,
+    render_done => enem_render_done
   );
 
   render_game_inst : entity work.render_game
@@ -108,19 +120,27 @@ begin
     clk => CLK100MHZ,
     reset => clr,
     go => swapped,
-    item_in => (others => '0'),
-    itemx_in => (others => '0'),
-    itemy_in => (others => '0'),
+    item_in => item_out,
+    itemx_in => itemx_out,
+    itemy_in => itemy_out,
     player_x => player_x,
     player_y => player_y,
     player_hp => player_hp,
     player_flip => '0',
+
     whip => (others => '0'),
     garlic => (others => '0'),
     mage => (others => '0'),
     armour => (others => '0'),
     gloves => (others => '0'),
     wings => (others => '0'),
+
+    enem_ready_to_start_rendering => enem_ready_to_start_rendering,
+    enem_request_next_enemy => enem_request_next_enemy,
+    enem_enemy_to_render => enem_enemy_to_render,
+    enem_enemy_valid => enem_enemy_valid,
+    enem_render_done => enem_render_done,
+
     pixel_out => pixel,
     pixel_valid => pixel_valid
   );

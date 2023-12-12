@@ -70,6 +70,23 @@ package custom_types is
     enemy_valid:std_logic;
   end record; 
 
+  -- enemy type used in rewrite
+  type enemy_t is record
+    kind : std_logic_vector(1 downto 0); -- 2, 2 downto 0
+    pos : frame_coord_t; -- 18, x 11 downto 3, y 20 downto 4
+    vel : frame_coord_t; -- 18
+    hp : unsigned(2 downto 0); -- 3
+    valid : std_logic; -- 1
+  end record;
+
+  -- bits:
+  -- kind : 2
+  -- pos : 18
+  -- vel : 18
+  -- hp : 3
+  -- valid : 1
+  constant enemy_bits : integer := 2 + 18 + 18 + 3 + 1;
+
   type gpu_instruction_t is record
     renderer : gpu_renderer_t;
     pos : translation_t;
