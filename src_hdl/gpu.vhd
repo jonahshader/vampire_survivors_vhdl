@@ -213,7 +213,8 @@ begin
     clk => clk,
     reset => reset,
     go => sprite_go,
-    sprite_index => instruction_reg.enum,
+    size => instruction_reg.size,
+    gpu_enum => instruction_reg.enum,
     pixel_out => sprite_pixel_out,
     pixel_valid => sprite_pixel_valid,
     done => sprite_done

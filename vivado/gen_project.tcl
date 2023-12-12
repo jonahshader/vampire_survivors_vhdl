@@ -52,7 +52,9 @@ set src_files [list \
   [file normalize "${src_common_dir}/input_sync.vhd"] \
   [file normalize "${src_common_dir}/level_pkg.vhd"] \
   [file normalize "${src_common_dir}/render_level1.vhd"] \
+  [file normalize "${src_common_dir}/render_player.vhd"] \
   [file normalize "${src_common_dir}/custom_types.vhd"] \
+  [file normalize "${src_common_dir}/render_game.vhd"] \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
   [file normalize "${src_common_dir}/imports/prom.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \

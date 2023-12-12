@@ -7,9 +7,9 @@ use ieee.math_real.log2;
 
 entity sprite_renderer is
   generic(
-    SPRITESHEET_WIDTH_PX : natural := 256;
-    SPRITESHEET_HEIGHT_PX : natural := 256;
-    SPRITESHEET_FILENAME : string := "spritesheet.png"
+    SPRITESHEET_WIDTH_PX : natural := 32;
+    SPRITESHEET_HEIGHT_PX : natural := 128;
+    SPRITESHEET_FILENAME : string := "..\..\src_hdl\rom\forest_tiles_fixed.rom"
   );
   port(
     clk : in std_logic;
@@ -59,8 +59,8 @@ begin
     );
 
     state_proc : process(clk)
-      variable x_start_var : unsigned(x_start'length-1 downto 0);
-      variable y_start_var : unsigned(y_start'length-1 downto 0);
+      variable x_start_var : unsigned(7 downto 0);
+      variable y_start_var : unsigned(7 downto 0);
     begin
       if rising_edge(clk) then
         if reset = '1' then
@@ -82,8 +82,8 @@ begin
                 state_reg <= draw_sprite;
                 x_start_var := unsigned(gpu_enum(7 downto 0));
                 y_start_var := unsigned(gpu_enum(15 downto 8));
-                x_start <= x_start_var;
-                y_start <= y_start_var;
+                x_start <= resize(x_start_var, x_start'length);
+                y_start <= resize(y_start_var, y_start'length);
                 size_reg <= size;
 
                 addr_b <= resize(

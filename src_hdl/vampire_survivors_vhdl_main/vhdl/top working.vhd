@@ -2,7 +2,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.custom_types.all;
-use ieee.fixed_pkg.all;
 
 entity top is
   Port ( 
@@ -32,6 +31,14 @@ architecture Behavioral of top is
   signal vga_hs_temp, vga_vs_temp : std_logic;
   
   signal vga_clk1, vga_clk2 : std_logic;
+
+  signal gpu_instruction : gpu_instruction_t;
+  signal gpu_go : std_logic;
+  signal gpu_done : std_logic;
+  signal lvl_done : std_logic;
+  signal lvl_done_delay : std_logic := '0';
+  signal lvl_done_edge_count : unsigned(15 downto 0) := (others => '0');
+
 
   signal pixel : pixel_t;
   signal pixel_valid : std_logic := '0';
@@ -68,27 +75,41 @@ begin
   down_inputs(0) <= BTND;
   select_inputs(0) <= BTNC;
 
-  render_game_inst : entity work.render_game
+  -- visualize lvl_done_edge_count
+  LED <= std_logic_vector(lvl_done_edge_count(15 downto 0));
+
+  gpu_inst : entity work.gpu
+  port map(
+    clk => CLK100MHZ,
+    reset => clr,
+    instruction => gpu_instruction,
+    go => gpu_go,
+    done => gpu_done,
+    pixel_out => pixel,
+    pixel_valid => pixel_valid
+  );
+
+  render_level1_inst : entity work.render_level1
   port map(
     clk => CLK100MHZ,
     reset => clr,
     go => swapped,
-    item_in => (others => '0'),
-    itemx_in => (others => '0'),
-    itemy_in => (others => '0'),
-    player_x => std_logic_vector(to_unsigned(128, 10)),
-    player_y => std_logic_vector(to_unsigned(128, 10)),
-    player_hp => std_logic_vector(to_unsigned(70, 8)),
-    player_flip => '0',
-    whip => (others => '0'),
-    garlic => (others => '0'),
-    mage => (others => '0'),
-    armour => (others => '0'),
-    gloves => (others => '0'),
-    wings => (others => '0'),
-    pixel_out => pixel,
-    pixel_valid => pixel_valid
+    gpu_instruction => gpu_instruction,
+    gpu_go => gpu_go,
+    gpu_done => gpu_done,
+    done => lvl_done -- TODO: currently don't care but use this to chain rendering
   );
+
+  render_lvl_debug_proc : process(CLK100MHZ)
+  begin
+    if rising_edge(CLK100MHZ) then
+      lvl_done_delay <= lvl_done;
+      if lvl_done_delay = '0' and lvl_done = '1' then
+        lvl_done_edge_count <= lvl_done_edge_count + 1;
+      end if;
+    end if;
+  end process;
+
 
   screen_inst : entity work.screen
   port map(
