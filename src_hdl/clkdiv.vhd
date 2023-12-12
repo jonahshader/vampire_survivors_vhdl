@@ -1,4 +1,4 @@
--- clkDivider used for keyboard, also for updating play_stats, will be updated after to screen frame logic
+-- used for keyboard, but the remaining will use mclk
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.STD_LOGIC_unsigned.all;
@@ -6,7 +6,6 @@ entity clkdiv is
 	 port(
 		 mclk : in STD_LOGIC;
 		 clr : in STD_LOGIC;
-		 clk190 : out STD_LOGIC;
 		 clk40 : out STD_LOGIC
 	     );
 end clkdiv;
@@ -22,6 +21,5 @@ begin
 	 q <= q + 1;
     end if;
   end process;
-  clk40 <= q(21);		-- 48 Hz
-  clk190 <= q(18);		-- 190 Hz
+  clk40 <= q(21);		  -- 48 Hz
 end clkdiv;

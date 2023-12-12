@@ -8,9 +8,9 @@ entity keyboard_ctrl is
 		 clr : in STD_LOGIC;
 		 PS2C : in STD_LOGIC;
 		 PS2D : in STD_LOGIC;
-		 keyval1: out STD_LOGIC_VECTOR(7 downto 0);
-		 keyval2: out STD_LOGIC_VECTOR(7 downto 0);
-		 keyval3 : out STD_LOGIC_VECTOR(7 downto 0)
+		 press_code: out STD_LOGIC_VECTOR(7 downto 0);
+		 down_code: out STD_LOGIC_VECTOR(7 downto 0);
+		 release_code : out STD_LOGIC_VECTOR(7 downto 0)
 	     );
 end keyboard_ctrl;
 architecture keyboard_ctrl of keyboard_ctrl is  
@@ -148,7 +148,7 @@ begin
 	 end case;
    end if;
 end process skey;
-keyval1 <= keyval1s;
-keyval2 <= keyval2s;
-keyval3 <= keyval3s;
+press_code <= keyval1s;
+down_code <= keyval2s;
+release_code <= keyval3s;
 end keyboard_ctrl;

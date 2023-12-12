@@ -57,14 +57,13 @@ set src_files [list \
   [file normalize "${src_common_dir}/imports/prom.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
   [file normalize "${src_common_dir}/imports/square_root.vhd"] \
+  [file normalize "${src_common_dir}/auto_atk.vhd"] \
   [file normalize "${src_common_dir}/clkdiv.vhd"] \
   [file normalize "${src_common_dir}/keyboard_ctrl.vhd"] \
   [file normalize "${src_common_dir}/keybinds.vhd"] \
-  [file normalize "${src_common_dir}/enem_gen.vhd"] \
-  [file normalize "${src_common_dir}/gamestate_comps.vhd"] \
   [file normalize "${src_common_dir}/gamestate.vhd"] \
   [file normalize "${src_common_dir}/inv_mng.vhd"] \
-  [file normalize "${src_common_dir}/item_gen.vhd"] \
+  [file normalize "${src_common_dir}/item_gen_rand.vhd"] \
   [file normalize "${src_common_dir}/player_stat.vhd"] \
   [file normalize "${src_common_dir}/Bram_control.vhd"] \
   [file normalize "${src_common_dir}/Enemy_Generator.vhd"] \

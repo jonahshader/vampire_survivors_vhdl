@@ -5,7 +5,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity player_stat is
     port (
-        clk190 : in STD_LOGIC; -- Clock input
+        clk : in STD_LOGIC; -- Clock input
         --input from the inv_mng
         armour : in STD_LOGIC_VECTOR(3 downto 0);
         gloves : in STD_LOGIC_VECTOR(3 downto 0);
@@ -14,8 +14,8 @@ entity player_stat is
         x1 : in STD_LOGIC_VECTOR(9 downto 0);
         y1 : in STD_LOGIC_VECTOR(9 downto 0);
         --player c1 and r1 (calculated from 
-        c1 : in STD_LOGIC_VECTOR(9 downto 0);
-        r1 : in STD_LOGIC_VECTOR(9 downto 0);
+        player_y : in STD_LOGIC_VECTOR(9 downto 0);
+        player_x : in STD_LOGIC_VECTOR(9 downto 0);
         --item and modifers
         attk_spd : out STD_LOGIC_VECTOR(3 downto 0);
         mvm_spd : out STD_LOGIC_VECTOR(3 downto 0);
@@ -39,19 +39,18 @@ architecture player_stat of player_stat is
     signal hp_temp : STD_LOGIC_VECTOR(7 downto 0) := "01100100"; -- Initialize hp_temp as binary 100
 
 begin
-    process(clk190) -- Add clk190 to sensitivity list
+    process(clk) -- Add clk to sensitivity list
     begin
-        if rising_edge(clk190) then -- Process on the rising edge of clk190
-            -- Calculate armr_perc_temp based on armour input
-            -- this may need to be doublechecked
-            armr_perc_temp <= armour * armr_modifier;
-            -- Calculate attk_spd_temp based on gloves input
-            attk_spd_temp <= gloves * attk_spd_modifier;
-            -- Calculate mvm_spd_temp based on wings input
-            mvm_spd_temp <= wings * mvm_spd_modifier;
+        if rising_edge(clk) then -- Process on the rising edge of clk
+            -- armour adds armor percentage
+            -- gloves add attack speed
+            -- wings add movement speed
+            armr_perc_temp <= (armour * armr_modifier)(3 downto 0);
+            attk_spd_temp <= (gloves * attk_spd_modifier)(3 downto 0);
+            mvm_spd_temp <= (wings * mvm_spd_modifier)(3 downto 0);
 
             -- Damage calculation (send this to automate attack)
-            if x1 = c1 and y1 = r1 then -- rectangle collider
+            if x1 = player_x and y1 = player_y then -- rectangle collider
                 if armour > "0000" then
                     armr_perc_temp <= armr_perc_temp - "0101"; -- Subtract 5 from armour, can change this after for damage amount
                 else
