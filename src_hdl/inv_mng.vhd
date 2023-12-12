@@ -11,8 +11,8 @@ entity inv_mng is
         player_y : in STD_LOGIC_VECTOR(9 downto 0);   -- player coords
         player_x : in STD_LOGIC_VECTOR(9 downto 0);
         -- item x,y
-        itemx_out : in STD_LOGIC_VECTOR(15 downto 0);
-        itemy_out : in STD_LOGIC_VECTOR(15 downto 0);
+        itemx_out : in STD_LOGIC_VECTOR(7 downto 0);
+        itemy_out : in STD_LOGIC_VECTOR(6 downto 0);
         item_out : in STD_LOGIC_VECTOR(2 downto 0); -- Update with Han's random generator
         
         -- registers to hold items and their level
@@ -42,12 +42,12 @@ begin
         if rising_edge(clk) then -- 
             -- Initialize all registers to '0000' (no items)
             if clr = '1' then
-                whip <= "0000";
-                garlic <= "0000";
-                mage <= "0000";
-                armour <= "0000";
-                gloves <= "0000";
-                wings <= "0000";
+                whip_reg <= "0000";
+                garlic_reg <= "0000";
+                mage_reg <= "0000";
+                armour_reg <= "0000";
+                gloves_reg <= "0000";
+                wings_reg <= "0000";
             else
             -- Check if the current position matches x and y
 

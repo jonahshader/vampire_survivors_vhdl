@@ -6,7 +6,7 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity RandomNumberGenerator is
     generic (
         seed : STD_LOGIC_VECTOR(15 downto 0) := x"0100"  -- Initial value of the LFSR
-    )
+    );
     Port ( 
         clk : in STD_LOGIC;  -- Clock input
         rst : in STD_LOGIC;  -- Reset input

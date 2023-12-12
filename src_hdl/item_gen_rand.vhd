@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
     -- Definition of items
         -- 000 - No Item
@@ -36,8 +37,8 @@ begin
     begin
         if rising_edge(clk) and swapped = '1' then
             -- if this fails, import numeric_std
-            -- if spawn_timer = std_logic_vector(to_unsigned(spawn_interval - 1, spawn_timer'length)) then
-            if spawn_timer = std_logic_vector(spawn_interval - 1) then
+            if spawn_timer = std_logic_vector(to_unsigned(spawn_interval - 1, spawn_timer'length)) then
+            -- if spawn_timer = std_logic_vector(spawn_interval - 1) then
                 spawn_timer <= (others => '0');
                 -- select random item
                 item_out <= random_item(2 downto 0);
@@ -50,9 +51,9 @@ begin
     end process;
 
     -- Instantiate the Random Number Generator for item pos
-    random_number_generator_x_inst: entity work.RandomNumberGenerator
+    rng1: entity work.RandomNumberGenerator
     generic map (
-        seed => "0010001000110000", -- 16-bit seed
+        seed => "0010001000110000" -- 16-bit seed
     )
     port map (
         clk => clk,
@@ -61,9 +62,9 @@ begin
     );
 
     -- Instantiate the Random Number Generator for item type
-    random_number_generator_x_inst: entity work.RandomNumberGenerator
+    rng2: entity work.RandomNumberGenerator
     generic map (
-        seed => "0101111000011111", -- 16-bit seed
+        seed => "0101111000011111" -- 16-bit seed
     )
     port map (
         clk => clk,

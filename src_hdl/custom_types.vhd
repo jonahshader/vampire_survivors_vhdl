@@ -7,15 +7,7 @@ use ieee.math_real.ceil;
 use work.gpu_codes.all;
 
 package custom_types is
-  -- used for enmey signal 83bits
-  type enemy is record
-     enemy_type:std_logic_vector(1 downto 0);
-     enemy_position: world_pos_t;
-     enemy_hp:std_logic_vector(2 downto 0);
-     enemy_velocity:world_pos_t;
-     enemy_order:std_logic_vector(6 downto 0);
-     enemy_valid:std_logic;
-  end record; 
+
 
   
   subtype color_component_t is unsigned(3 downto 0);
@@ -67,6 +59,16 @@ package custom_types is
     y : world_pos_t;
   end record;
   function default_world_coord return world_coord_t;
+
+  -- used for enmey signal 83bits
+  type enemy is record
+    enemy_type:std_logic_vector(1 downto 0);
+    enemy_position: world_pos_t;
+    enemy_hp:std_logic_vector(2 downto 0);
+    enemy_velocity:world_pos_t;
+    enemy_order:std_logic_vector(6 downto 0);
+    enemy_valid:std_logic;
+  end record; 
 
   type gpu_instruction_t is record
     renderer : gpu_renderer_t;

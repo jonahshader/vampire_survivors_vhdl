@@ -32,9 +32,9 @@ architecture player_stat of player_stat is
     constant attk_spd_modifier : STD_LOGIC_VECTOR(3 downto 0) := "0010"; -- Binary 2
     constant mvm_spd_modifier : STD_LOGIC_VECTOR(3 downto 0) := "0010"; -- Binary 2
     --temp calcs
-    signal armr_perc_temp : STD_LOGIC_VECTOR(3 downto 0) := "0000"; -- Initialize armr_perc_temp as 0
-    signal attk_spd_temp : STD_LOGIC_VECTOR(3 downto 0) := "0000"; -- Initialize attk_spd_temp as 0
-    signal mvm_spd_temp : STD_LOGIC_VECTOR(3 downto 0) := "0000"; -- Initialize mvm_spd_temp as 0
+    signal armr_perc_temp : STD_LOGIC_VECTOR(7 downto 0) := (others => '0'); -- Initialize armr_perc_temp as 0
+    signal attk_spd_temp : STD_LOGIC_VECTOR(7 downto 0) := (others => '0'); -- Initialize attk_spd_temp as 0
+    signal mvm_spd_temp : STD_LOGIC_VECTOR(7 downto 0) := (others => '0'); -- Initialize mvm_spd_temp as 0
     --hp
     signal hp_temp : STD_LOGIC_VECTOR(7 downto 0) := "01100100"; -- Initialize hp_temp as binary 100
 
@@ -45,6 +45,7 @@ begin
             -- armour adds armor percentage
             -- gloves add attack speed
             -- wings add movement speed
+            -- TODO: this logic doesn't make sense...
             armr_perc_temp <= armour * armr_modifier;
             attk_spd_temp <= gloves * attk_spd_modifier;
             mvm_spd_temp <= wings * mvm_spd_modifier;

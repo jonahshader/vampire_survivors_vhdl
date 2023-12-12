@@ -15,7 +15,7 @@ entity auto_atk is
       mage : in STD_LOGIC_VECTOR(3 downto 0);  -- Mage level, need to figure out what type of attack style with mage.
       
       -- these will be outputs to the GPU to render different things.
-      radius_garlic : out STD_LOGIC_VECTOR(9 downto 0);  -- Garlic radius
+      radius_garlic : out STD_LOGIC_VECTOR(9 downto 0) := (others => '0');  -- Garlic radius
       rect_whip : out STD_LOGIC_VECTOR(9 downto 0);  -- Linear line for Whip
 
       -- damage
@@ -32,7 +32,7 @@ begin
    begin
       if rising_edge(clk) then
          -- Calculate attack effects here
-         radius_garlic <= garlic; -- what inputs do we need to send to the GPU to render a circle
+         radius_garlic(8 downto 5) <= garlic; -- what inputs do we need to send to the GPU to render a circle
          
          -- Example: Calculate Whip linear line based on whip level
          rect_whip <= (others => '0');  -- Placeholder for Whip calculation

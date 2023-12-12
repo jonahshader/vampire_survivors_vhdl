@@ -16,7 +16,7 @@ entity keybinds is
       right : out std_logic;
       up : out std_logic;
       down : out std_logic;
-      enter : out std_logic;
+      enter : out std_logic
    );
 end keybinds;
 

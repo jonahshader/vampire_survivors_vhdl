@@ -3,16 +3,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use work.custom_types.all;
 use IEEE.std_logic_unsigned.ALL;
 
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity Enemy_update_unit is
     Port (enmey_to_update: in enemy;
           clr:in std_logic;
@@ -77,23 +67,25 @@ end process;
 
 -------------------Position update  ----------------------
 
-Position: process(attacked_sig,updated_enemy,charactor_cord)
-begin 
-     if updated_enemy.enemy_position.x > charactor_cord.x then
-        if attacked_sig = '1' then 
-              updated_enemy.enemy_position.x <= updated_enemy.enemy_position.x + updated_enemy.enemy_velocity.x;   -------- Knock Back ------
-        else 
-              updated_enemy.enemy_position.x <= updated_enemy.enemy_position.x - updated_enemy.enemy_velocity.x;   -------- Move towards player ------
-        end if; 
+-- TODO: fix this
+-- Position: process(attacked_sig,updated_enemy,charactor_cord)
+-- begin 
+--      if updated_enemy.enemy_position.x > charactor_cord.x then
+--         if attacked_sig = '1' then 
+--               updated_enemy.enemy_position.x <= updated_enemy.enemy_position.x + updated_enemy.enemy_velocity.x;   -------- Knock Back ------
+--         else 
+--               updated_enemy.enemy_position.x <= updated_enemy.enemy_position.x - updated_enemy.enemy_velocity.x;   -------- Move towards player ------
+--         end if; 
+--       end if;
      
-     if updated_enemy.enemy_position.y > charactor_cord.y then
-        if attacked_sig = '1' then 
-              updated_enemy.enemy_position.x <= updated_enemy.enemy_position.y + updated_enemy.enemy_velocity.y;
-        else 
-              updated_enemy.enemy_position.x <= updated_enemy.enemy_position.y - updated_enemy.enemy_velocity.y;
-        end if;   
-     end if;   
-end process; 
+--      if updated_enemy.enemy_position.y > charactor_cord.y then
+--         if attacked_sig = '1' then 
+--               updated_enemy.enemy_position.x <= updated_enemy.enemy_position.y + updated_enemy.enemy_velocity.y;
+--         else 
+--               updated_enemy.enemy_position.x <= updated_enemy.enemy_position.y - updated_enemy.enemy_velocity.y;
+--         end if;   
+--      end if;   
+-- end process; 
 
 enemy_update<= updated_enemy;
 

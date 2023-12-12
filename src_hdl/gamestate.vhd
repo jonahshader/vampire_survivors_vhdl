@@ -1,11 +1,10 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
---use work.gamestate_comps.all;
+use IEEE.NUMERIC_STD.ALL;
 
 entity gamestate is
     port ( 
         -- from screen
-        -- Add Swapped (will be tied to Done Signal)
         mclk : in STD_LOGIC;
         clr : in STD_LOGIC;
         -- Keyboard Input
@@ -27,14 +26,15 @@ entity gamestate is
                 -- 111 - Wings (movement speed)
         swapped : in std_logic; -- screen
         item_out : out STD_LOGIC_VECTOR(2 downto 0);
-        itemx_out : out STD_LOGIC_VECTOR(15 downto 0);
-        itemy_out : out STD_LOGIC_VECTOR(15 downto 0);
-        done : out std_logic;
+        itemx_out : out STD_LOGIC_VECTOR(7 downto 0);
+        itemy_out : out STD_LOGIC_VECTOR(6 downto 0);
 
         --  character movement (needs to go to renderer)
         player_y : out std_logic_vector (9 downto 0);
         player_x : out std_logic_vector (9 downto 0); 
         flipped : out std_logic; 
+        -- hp out from player_stat
+        player_hp : out STD_LOGIC_VECTOR(7 downto 0);
 
         -- inventory management, outputs what item we will render and with what level (if needed)
         whip : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Whip
@@ -42,10 +42,7 @@ entity gamestate is
         mage : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Mage
         armour : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Armour
         gloves : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Gloves
-        wings : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Wings
-        
-        -- hp out from player_stat
-        hp : out STD_LOGIC_VECTOR(7 downto 0)
+        wings : out STD_LOGIC_VECTOR(3 downto 0)  -- Outputs for Wings
         
         -- attacks from auto_atk.vhd, this will be for whip, mage, garlic attacks.
     );
@@ -66,6 +63,10 @@ architecture gamestate_architecture of gamestate is
     --player_stat
     signal armr_perc : STD_LOGIC_VECTOR(3 downto 0); 
     signal attk_spd : STD_LOGIC_VECTOR(3 downto 0);
+
+    -- TODO: do something with these
+    signal radius_garlic : STD_LOGIC_VECTOR(9 downto 0);
+    signal linear_whip : STD_LOGIC_VECTOR(9 downto 0);
 
     -- input sync stuff
     signal kb_left, kb_right, kb_up, kb_down, kb_enter : std_logic;
@@ -128,11 +129,14 @@ begin
             right => right,
             up => up,
             down => down,
-            speed => speed,
+            speed => to_unsigned(1,4), -- TODO: Connect speed signal,
             player_x => player_x,
             player_y => player_y
         );
     input_sync_inst : entity work.input_sync
+        generic map(
+            CONTROLLERS => 2
+        )
         port map (
             clk => mclk,
             left_in => left_vec,
@@ -183,8 +187,8 @@ begin
             gloves => gloves,
             wings => wings,
             -- enemy x1, y1
-            x1 => -- Connect x1 signal,
-            y1 => -- Connect y1 signal,
+            x1 => (others => '0'), -- TODO: Connect x1 signal,
+            y1 => (others => '0'), -- TODO: Connect y1 signal,
             -- player x,y (player_y,player_x)
             player_y => player_y,
             player_x => player_x,
@@ -193,21 +197,21 @@ begin
             mvm_spd => mvm_spd,
             armr_perc => armr_perc,
             -- hp, this is also where damage is calculated
-            hp => hp
+            hp => player_hp
         );
     -- this needs to be updated with Han's code, 
-    U8: entity work.enem_gen
-        port map (
-            clk => mclk,
-            player_y => player_y,
-            player_x => player_x,
-            x => -- Connect x signal,
-            y => -- Connect y signal,
-            x1 => x1,
-            y1 => y1
-        );
+    -- U8: entity work.enem_gen
+    --     port map (
+    --         clk => mclk,
+    --         player_y => player_y,
+    --         player_x => player_x,
+    --         x => (others => '0'), -- TODO: Connect x signal,
+    --         y => (others => '0'), -- TODO: Connect y signal,
+    --         x1 => x1,
+    --         y1 => y1
+    --     );
     
-    U8: entity work.auto_atk    -- this needs to be worked on
+    auto_atk_inst : entity work.auto_atk    -- this needs to be worked on
         port map (
             clk => mclk,
             player_y => player_y,
