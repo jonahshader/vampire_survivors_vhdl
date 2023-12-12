@@ -16,7 +16,7 @@ entity player_move is
     speed : in unsigned(3 downto 0);
 
     flipped : out std_logic;
-    player_x : out std_logic_vector(9 downto 0)
+    player_x : out std_logic_vector(9 downto 0);
     player_y : out std_logic_vector(9 downto 0)
   );
 end player_move;
@@ -38,10 +38,10 @@ begin
       elsif swapped = '1' then
         if left = '1' then
           player_x_reg <= player_x_reg - speed;
-          flipped = '1'
+          flipped <= '1';
         elsif right = '1' then
           player_x_reg <= player_x_reg + speed;
-          flipped = '0'
+          flipped <= '0';
         elsif up = '1' then
           player_y_reg <= player_y_reg - speed;
         elsif down = '1' then
@@ -53,5 +53,6 @@ begin
 
   player_x <= std_logic_vector(player_x_reg);
   player_y <= std_logic_vector(player_y_reg);
+  flipped <= flipped;
 
 end player_move;

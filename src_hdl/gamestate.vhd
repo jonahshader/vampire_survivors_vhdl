@@ -128,6 +128,7 @@ begin
             right => right,
             up => up,
             down => down,
+            speed => speed,
             player_x => player_x,
             player_y => player_y
         );
@@ -153,13 +154,13 @@ begin
             item_out => item_out,
             itemx_out => itemx_out,
             itemy_out => itemy_out,
-            swapped => swapped,
+            swapped => swapped
         );
     -- OK, expect for the rectangle collider
     U6: entity work.inv_mng
         port map (
             clk => mclk,
-            clr => clr
+            clr => clr,
             player_y => player_y,
             player_x => player_x,
             -- from item_gen, the item_id and item x,y

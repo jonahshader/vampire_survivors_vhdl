@@ -45,9 +45,9 @@ begin
             -- armour adds armor percentage
             -- gloves add attack speed
             -- wings add movement speed
-            armr_perc_temp <= (armour * armr_modifier)(3 downto 0);
-            attk_spd_temp <= (gloves * attk_spd_modifier)(3 downto 0);
-            mvm_spd_temp <= (wings * mvm_spd_modifier)(3 downto 0);
+            armr_perc_temp <= armour * armr_modifier;
+            attk_spd_temp <= gloves * attk_spd_modifier;
+            mvm_spd_temp <= wings * mvm_spd_modifier;
 
             -- Damage calculation (send this to automate attack)
             if x1 = player_x and y1 = player_y then -- rectangle collider
@@ -61,8 +61,8 @@ begin
     end process;
 
     -- Output results
-    armr_perc <= armr_perc_temp;
-    attk_spd <= attk_spd_temp;
-    mvm_spd <= mvm_spd_temp;
+    armr_perc <= armr_perc_temp(3 downto 0);
+    attk_spd <= attk_spd_temp(3 downto 0);
+    mvm_spd <= mvm_spd_temp(3 downto 0);
     hp <= hp_temp;
 end player_stat;
