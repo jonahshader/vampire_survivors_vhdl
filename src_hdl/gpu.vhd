@@ -32,10 +32,10 @@ use work.custom_types.all;
 
 -- sprite:
 --   renderer = sprite
---   pos = top left corner of sprite
---   size = unused (TODO: maybe use for sprite resizing?)
+--   pos = screen position to draw sprite
+--   size = width and height of sprite region to draw
 --   color = unused (TODO: maybe use for sprite tint?)
---   enum = sprite number
+--   enum = top left corner of sprite region to draw
 
 -- tile:
 --   renderer = tile
@@ -213,7 +213,8 @@ begin
     clk => clk,
     reset => reset,
     go => sprite_go,
-    sprite_index => instruction_reg.enum,
+    size => instruction_reg.size,
+    gpu_enum => instruction_reg.enum,
     pixel_out => sprite_pixel_out,
     pixel_valid => sprite_pixel_valid,
     done => sprite_done

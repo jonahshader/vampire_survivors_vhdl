@@ -34,8 +34,8 @@ architecture render_level1 of render_level1 is
 
   type state_t is (idle, render);
   signal state_reg : state_t := idle;
-begin
 
+begin
   gpu_instruction <= gpu_instruction_reg;
   gpu_go <= gpu_go_reg;
   done <= done_reg;

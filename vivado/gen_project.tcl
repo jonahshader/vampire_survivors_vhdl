@@ -52,11 +52,31 @@ set src_files [list \
   [file normalize "${src_common_dir}/input_sync.vhd"] \
   [file normalize "${src_common_dir}/level_pkg.vhd"] \
   [file normalize "${src_common_dir}/render_level1.vhd"] \
+  [file normalize "${src_common_dir}/render_player.vhd"] \
   [file normalize "${src_common_dir}/custom_types.vhd"] \
+  [file normalize "${src_common_dir}/render_game.vhd"] \
+  [file normalize "${src_common_dir}/render_enemies.vhd"] \
   [file normalize "${src_common_dir}/imports/bram_sdp.vhd"] \
   [file normalize "${src_common_dir}/imports/prom.vhd"] \
   [file normalize "${src_common_dir}/imports/clock_mux.vhd"] \
   [file normalize "${src_common_dir}/imports/square_root.vhd"] \
+  [file normalize "${src_common_dir}/auto_atk.vhd"] \
+  [file normalize "${src_common_dir}/clkdiv.vhd"] \
+  [file normalize "${src_common_dir}/keyboard_ctrl.vhd"] \
+  [file normalize "${src_common_dir}/keybinds.vhd"] \
+  [file normalize "${src_common_dir}/gamestate.vhd"] \
+  [file normalize "${src_common_dir}/inv_mng.vhd"] \
+  [file normalize "${src_common_dir}/item_gen_rand.vhd"] \
+  [file normalize "${src_common_dir}/player_stat.vhd"] \
+  [file normalize "${src_common_dir}/player_move.vhd"] \
+  [file normalize "${src_common_dir}/Bram_control.vhd"] \
+  [file normalize "${src_common_dir}/Enemy_Generator.vhd"] \
+  [file normalize "${src_common_dir}/Enemy_update_ctrl.vhd"] \
+  [file normalize "${src_common_dir}/Enemy_update_unit.vhd"] \
+  [file normalize "${src_common_dir}/enemy_update_rewrite.vhd"] \
+  [file normalize "${src_common_dir}/enemy_state_rewrite.vhd"] \
+  [file normalize "${src_common_dir}/render_item.vhd"] \
+  [file normalize "${src_common_dir}/RandomNumberGenerator.vhd"] \
   [file normalize "${src_common_dir}/imports/plotline.vhd"] \
   [file normalize "${src_common_dir}/rom/forest_tiles_fixed.rom"] \
   [file normalize "${src_dir}/ip/vga_clocks/vga_clocks.xci"] \
