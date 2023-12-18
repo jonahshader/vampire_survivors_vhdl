@@ -29,13 +29,13 @@ end enemy_state_rewrite;
 
 architecture enemy_state_rewrite of enemy_state_rewrite is
   -- bram signals
-  -- read ports
+  -- write ports
   signal we_a : boolean := false;
   signal enem_addr : unsigned(integer(ceil(log2(real(ENEMY_COUNT)))) - 1 downto 0) := (others => '0');
   signal din_a : std_logic_vector(ENEMY_BITS - 1 downto 0) := (others => '0');
 
-  -- write ports
-  signal dout_b : std_logic_vector(ENEMY_BITS - 1 downto 0) := (others => '0');
+  -- read ports
+  signal dout_b : std_logic_vector(ENEMY_BITS - 1 downto 0);
   
   type state_t is (idle, update_state, render_state);
   type memory_state_t is (idle, data_to_reg, send_data, wait_for_done, determine_new_addr);
@@ -62,7 +62,6 @@ begin
         we_a <= false;
         enem_addr <= (others => '0');
         din_a <= (others => '0');
-        dout_b <= (others => '0');
         ready_to_start_rendering <= '0';
       else
         case state is 

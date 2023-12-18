@@ -53,7 +53,7 @@ architecture rtl of prom is
         file_close(f_init);
       else
       -- TODO: How to output compile-time error?
-      -- report "Couldn't open RAM init file " & file_name & ", will default to all 0's." severity warning;
+        report "Couldn't open RAM init file " & file_name & ", will default to all 0's." severity warning;
       end if;
     end if;
 

@@ -12,8 +12,9 @@ entity tile_renderer is
     TILE_HEIGHT_PX : natural := 16;
     SPRITESHEET_WIDTH_PX : natural := 32;
     SPRITESHEET_HEIGHT_PX : natural := 128;
-    SPRITESHEET_FILENAME : string := "..\..\src_hdl\rom\forest_tiles_fixed.rom"
-    -- SPRITESHEET_FILENAME : string := "F:\Documents\Vivado\nexys_a7\ece5710\vampire_survivors_vhdl\src_hdl\rom\forest_tiles_fixed.rom"
+    -- SPRITESHEET_FILENAME : string := "..\..\src_hdl\rom\forest_tiles_fixed.rom"
+    -- SPRITESHEET_FILENAME : string := "F:/Documents/Vivado/nexys_a7/ece5710/vampire_survivors_vhdl/src_hdl/rom/forest_tiles_fixed.rom"
+    SPRITESHEET_FILENAME : string := "../../src_hdl/rom/forest_tiles_fixed.rom"
   );
   port(
     clk : in std_logic;
