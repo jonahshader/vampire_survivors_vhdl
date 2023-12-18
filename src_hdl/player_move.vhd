@@ -54,6 +54,5 @@ begin
 
   player_x <= std_logic_vector(player_x_reg);
   player_y <= std_logic_vector(player_y_reg);
-  flipped <= flipped;
 
 end player_move;

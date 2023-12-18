@@ -34,7 +34,8 @@ entity render_game is
 
     -- to screen
     pixel_out : out pixel_t;
-    pixel_valid : out std_logic
+    pixel_valid : out std_logic;
+    done : out std_logic
   );
 end entity render_game;
 
@@ -99,7 +100,7 @@ begin
         -- only proceed with new cmd if previous one is done
         case state is
           when idle =>
-            null;
+            done <= '0';
           when render_map =>
             if lvl1_done = '1' then
               state <= render_player;
@@ -118,7 +119,8 @@ begin
             end if;
           when render_item =>
             if item_done = '1' then
-              state <= render_enemies;
+              state <= idle; -- temp
+              done <= '1';
               render_go_delay <= '0';
             elsif render_go_delay = '0' then
               render_go_delay <= '1';
@@ -127,6 +129,7 @@ begin
           when render_enemies =>
             if enem_done = '1' then
               state <= idle;
+              done <= '1';
               render_go_delay <= '0';
             elsif render_go_delay = '0' then
               render_go_delay <= '1';
@@ -144,12 +147,9 @@ begin
   end process;
 
   -- this process determines who has control over the gpu based on the current state
-  mux_proc : process(state, lvl1_gpu_instruction, lvl1_gpu_go, plr_gpu_instruction, plr_gpu_go)
+  mux_proc : process(state, lvl1_gpu_instruction, lvl1_gpu_go, plr_gpu_instruction, plr_gpu_go, item_gpu_instruction, item_gpu_go, enem_gpu_instruction, enem_gpu_go)
   begin
     case state is
-      when idle =>
-        gpu_go <= '0';
-        gpu_instruction <= default_gpu_instruction;
       when render_map =>
         gpu_go <= lvl1_gpu_go;
         gpu_instruction <= lvl1_gpu_instruction;
@@ -162,7 +162,9 @@ begin
       when render_enemies =>
         gpu_go <= enem_gpu_go;
         gpu_instruction <= enem_gpu_instruction;
-      when others => null;
+      when others =>
+        gpu_go <= '0';
+        gpu_instruction <= default_gpu_instruction;
     end case;
   end process;
 
