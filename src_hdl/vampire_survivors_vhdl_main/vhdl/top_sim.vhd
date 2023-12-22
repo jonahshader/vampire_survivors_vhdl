@@ -42,12 +42,6 @@ architecture Behavioral of top is
   signal gloves : std_logic_vector(3 downto 0);
   signal wings : std_logic_vector(3 downto 0);
 
-  signal enem_ready_to_start_rendering : std_logic;
-  signal enem_request_next_enemy : std_logic;
-  signal enem_enemy_to_render : enemy_t;
-  signal enem_enemy_valid : std_logic;
-  signal enem_render_done : std_logic;
-
   signal pixel : pixel_t;
 
 begin
@@ -81,13 +75,7 @@ begin
     mage => mage,
     armour => armour,
     gloves => gloves,
-    wings => wings,
-    
-    ready_to_start_rendering => enem_ready_to_start_rendering,
-    request_next_enemy => enem_request_next_enemy,
-    enemy_to_render => enem_enemy_to_render,
-    enemy_valid => enem_enemy_valid,
-    render_done => enem_render_done
+    wings => wings
   );
 
   render_game_inst : entity work.render_game
@@ -109,12 +97,6 @@ begin
     armour => (others => '0'),
     gloves => (others => '0'),
     wings => (others => '0'),
-
-    enem_ready_to_start_rendering => enem_ready_to_start_rendering,
-    enem_request_next_enemy => enem_request_next_enemy,
-    enem_enemy_to_render => enem_enemy_to_render,
-    enem_enemy_valid => enem_enemy_valid,
-    enem_render_done => enem_render_done,
 
     pixel_out => pixel,
     pixel_valid => pixel_valid,

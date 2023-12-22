@@ -43,14 +43,7 @@ entity gamestate is
         mage : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Mage
         armour : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Armour
         gloves : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Gloves
-        wings : out STD_LOGIC_VECTOR(3 downto 0);  -- Outputs for Wings
-
-        -- enemy to gpu stuff
-        ready_to_start_rendering : out std_logic;
-        request_next_enemy : in std_logic;
-        enemy_to_render : out enemy_t;
-        enemy_valid : out std_logic;
-        render_done : out std_logic
+        wings : out STD_LOGIC_VECTOR(3 downto 0)  -- Outputs for Wings
         
         -- attacks from auto_atk.vhd, this will be for whip, mage, garlic attacks.
     );
@@ -209,31 +202,6 @@ begin
             -- hp, this is also where damage is calculated
             hp => player_hp
         );
-    -- this needs to be updated with Han's code, 
-    -- U8: entity work.enem_gen
-    --     port map (
-    --         clk => mclk,
-    --         player_y => player_y,
-    --         player_x => player_x,
-    --         x => (others => '0'), -- TODO: Connect x signal,
-    --         y => (others => '0'), -- TODO: Connect y signal,
-    --         x1 => x1,
-    --         y1 => y1
-    --     );
-
-    enem_rewrite : entity work.enemy_state_rewrite
-    port map(
-        clk => mclk,
-        reset => clr,
-        swapped => swapped,
-        player_x => unsigned(player_x),
-        player_y => unsigned(player_y),
-        ready_to_start_rendering => ready_to_start_rendering,
-        request_next_enemy => request_next_enemy,
-        enemy_to_render => enemy_to_render,
-        enemy_valid => enemy_valid,
-        render_done => render_done
-    );
     
     auto_atk_inst : entity work.auto_atk    -- this needs to be worked on
         port map (
