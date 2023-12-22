@@ -69,7 +69,6 @@ set src_files [list \
   [file normalize "${src_common_dir}/item_gen_rand.vhd"] \
   [file normalize "${src_common_dir}/player_stat.vhd"] \
   [file normalize "${src_common_dir}/player_move.vhd"] \
-  [file normalize "${src_common_dir}/Bram_control.vhd"] \
   [file normalize "${src_common_dir}/render_item.vhd"] \
   [file normalize "${src_common_dir}/RandomNumberGenerator.vhd"] \
   [file normalize "${src_common_dir}/imports/plotline.vhd"] \
