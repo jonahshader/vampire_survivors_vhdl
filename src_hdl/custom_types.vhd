@@ -8,8 +8,6 @@ use work.gpu_codes.all;
 
 package custom_types is
 
-
-  
   subtype color_component_t is unsigned(3 downto 0);
   function default_color_component return color_component_t;
   type color_t is record
@@ -19,7 +17,7 @@ package custom_types is
   end record;
   function default_color return color_t;
 
-   -- used for addressing framebuffer. encompasses 320x180
+  -- used for addressing framebuffer. encompasses 320x180
   subtype frame_pos_t is unsigned(8 downto 0);
   function default_frame_pos return frame_pos_t;
   type frame_coord_t is record
@@ -62,20 +60,20 @@ package custom_types is
 
   -- used for enmey signal 83bits
   type enemy is record
-    enemy_type:std_logic_vector(1 downto 0);
-    enemy_position: world_pos_t;
-    enemy_hp:std_logic_vector(2 downto 0);
-    enemy_velocity:world_pos_t;
-    enemy_order:std_logic_vector(6 downto 0);
-    enemy_valid:std_logic;
-  end record; 
+    enemy_type     : std_logic_vector(1 downto 0);
+    enemy_position : world_pos_t;
+    enemy_hp       : std_logic_vector(2 downto 0);
+    enemy_velocity : world_pos_t;
+    enemy_order    : std_logic_vector(6 downto 0);
+    enemy_valid    : std_logic;
+  end record;
 
   -- enemy type used in rewrite
   type enemy_t is record
-    kind : std_logic_vector(1 downto 0); -- 2, 2 downto 0
-    pos : frame_coord_t; -- 18, x 11 downto 3, y 20 downto 4
-    vel : frame_coord_t; -- 18
-    hp : unsigned(2 downto 0); -- 3
+    kind  : std_logic_vector(1 downto 0); -- 2, 2 downto 0
+    pos   : frame_coord_t; -- 18, x 11 downto 3, y 20 downto 4
+    vel   : frame_coord_t; -- 18
+    hp    : unsigned(2 downto 0); -- 3
     valid : std_logic; -- 1
   end record;
 
@@ -89,21 +87,17 @@ package custom_types is
 
   type gpu_instruction_t is record
     renderer : gpu_renderer_t;
-    pos : translation_t;
-    size : frame_coord_t;
-    color : color_t;
-    enum : std_logic_vector(15 downto 0);
+    pos      : translation_t;
+    size     : frame_coord_t;
+    color    : color_t;
+    enum     : std_logic_vector(15 downto 0);
   end record;
   function default_gpu_instruction return gpu_instruction_t;
-
-
   -- function prototypes
   function ceil_log2(x : integer) return integer;
 
   function vec_to_color(data_in : std_logic_vector(11 downto 0)) return color_t;
   function color_to_vec(data_in : color_t) return std_logic_vector;
-
-
 end package custom_types;
 
 package body custom_types is
@@ -181,7 +175,7 @@ package body custom_types is
   end function ceil_log2;
 
   function vec_to_color(data_in : std_logic_vector(11 downto 0)) return color_t is
-    variable result : color_t;
+    variable result               : color_t;
   begin
     result.r := color_component_t(data_in(3 downto 0));
     result.g := color_component_t(data_in(7 downto 4));
@@ -190,10 +184,10 @@ package body custom_types is
   end function vec_to_color;
 
   function color_to_vec(data_in : color_t) return std_logic_vector is
-    variable result : std_logic_vector(11 downto 0);
+    variable result               : std_logic_vector(11 downto 0);
   begin
-    result(3 downto 0) := std_logic_vector(data_in.r);
-    result(7 downto 4) := std_logic_vector(data_in.g);
+    result(3 downto 0)  := std_logic_vector(data_in.r);
+    result(7 downto 4)  := std_logic_vector(data_in.g);
     result(11 downto 8) := std_logic_vector(data_in.b);
     return result;
   end function color_to_vec;

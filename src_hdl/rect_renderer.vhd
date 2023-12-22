@@ -4,39 +4,40 @@ use ieee.numeric_std.all;
 use work.custom_types.all;
 
 entity rect_renderer is
-  port(
-    clk : in std_logic;
-    reset : in std_logic;
-    go : in std_logic;
-    size : in frame_coord_t;
-    color : in color_t;
-    pixel_out : out pixel_t;
+  port
+  (
+    clk         : in std_logic;
+    reset       : in std_logic;
+    go          : in std_logic;
+    size        : in frame_coord_t;
+    color       : in color_t;
+    pixel_out   : out pixel_t;
     pixel_valid : out std_logic;
-    done : out std_logic
+    done        : out std_logic
   );
 end entity rect_renderer;
 
 architecture rect_renderer of rect_renderer is
-  signal size_reg : frame_coord_t := default_frame_coord;
-  signal pixel_out_reg : pixel_t := default_pixel;
-  signal pixel_valid_reg : std_logic := '0';
-  signal done_reg : std_logic := '0';
+  signal size_reg        : frame_coord_t := default_frame_coord;
+  signal pixel_out_reg   : pixel_t       := default_pixel;
+  signal pixel_valid_reg : std_logic     := '0';
+  signal done_reg        : std_logic     := '0';
 
   type state_t is (idle, draw_rect);
   signal state_reg : state_t := idle;
 begin
-  pixel_out <= pixel_out_reg;
+  pixel_out   <= pixel_out_reg;
   pixel_valid <= pixel_valid_reg;
-  done <= done_reg;
-  
-  state_proc : process(clk) is
+  done        <= done_reg;
+
+  state_proc : process (clk) is
   begin
     if rising_edge(clk) then
       if reset = '1' then
-        state_reg <= idle;
-        done_reg <= '0';
+        state_reg       <= idle;
+        done_reg        <= '0';
         pixel_valid_reg <= '0';
-        pixel_out_reg <= default_pixel;
+        pixel_out_reg   <= default_pixel;
       else
         case state_reg is
           when idle =>
@@ -47,7 +48,7 @@ begin
               state_reg <= draw_rect;
               -- grab the color and size
               pixel_out_reg.color <= color;
-              size_reg <= size;
+              size_reg            <= size;
               -- start at 0,0
               pixel_out_reg.coord.x <= to_unsigned(0, pixel_out_reg.coord.x'length);
               pixel_out_reg.coord.y <= to_unsigned(0, pixel_out_reg.coord.y'length);
@@ -60,7 +61,7 @@ begin
               if pixel_out_reg.coord.x = size_reg.x - 1 then
                 -- we reached the end of the rectangle. go back to idle
                 state_reg <= idle;
-                done_reg <= '1';
+                done_reg  <= '1';
                 -- pixels from now on are invalid until we start again
                 pixel_valid_reg <= '0';
               else
@@ -83,6 +84,4 @@ begin
       end if;
     end if;
   end process;
-  
-
 end rect_renderer;
